@@ -1,15 +1,18 @@
 from pandas import read_csv
 from numpy import set_printoptions
 import numpy as np
+from scipy.sparse import *
+from skfeature.utility.construct_W import construct_W
 from skfeature.function.similarity_based.lap_score import lap_score, feature_ranking
 from skfeature.utility.construct_W import construct_W
 from sklearn.feature_selection import SelectKBest
-from scipy.sparse import *
 from skfeature.function.similarity_based.reliefF import reliefF
-from sklearn.feature_selection import f_classif
+from sklearn.feature_selection import f_classif, SelectFromModel
 from sklearn.feature_selection import RFE
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import ExtraTreesClassifier
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
+import math
 from sklearn.decomposition import PCA
 from nltk.tokenize import word_tokenize
 import pandas as pd
@@ -106,6 +109,12 @@ def constant_Remove(X,y):
     feature_selector.fit(X_train)
     print(feature_selector.get_support())
 
+def lasso(X,Y):
+    sel_ = SelectFromModel(LogisticRegression(C=1, penalty='l1', solver='liblinear'))
+    sel_.fit(X,Y)
+    result = sel_.get_support()
+    print(result)
+    return result
 
 
 def get_list_func(listName, reverse, Number):
@@ -114,11 +123,13 @@ def get_list_func(listName, reverse, Number):
     for key, value in zip(columns, listName):
         add_value = value[0]
         refer[key] = add_value
-    sort_orders = sorted(refer.items(), key=lambda x: x[1], reverse=True)
+    sort_orders = sorted(refer.items(), key=lambda x: x[1], reverse=reverse)
     result = []
     for i in sort_orders[0:Number]:
         result.append(i[0])
     return result
+
+
 
 def PRINTLIST(list1, list2):
     # print('for us')
@@ -139,24 +150,8 @@ def PRINTLIST(list1, list2):
     #summary = [feature_column_25_1, feature_column_20_1, feature_column_25_2, feature_column_20_2, feature_column_25_3, feature_column_20_3]
     summary=[feature_column_25_1, feature_column_20_1, feature_column_25_2, feature_column_20_2]
     print(summary)
-
-def find_Common(list1, list2, list3):
-    top10_first_feature = get_list_func(list1, True, 10)
-    #print(top10_first_feature)
-    top10_second_feature = get_list_func(list2, True, 10)
-    #print(top10_second_feature)
-    top10_third_feature = get_list_func(list3, True, 10)
-    #print(top10_third_feature)
-    final_result = []
-    for i in top10_first_feature:
-        final_result.append(i)
-    for j in top10_second_feature:
-        final_result.append(j)
-    for k in top10_third_feature:
-        final_result.append(k)
-    final_result = set(final_result)
-    #print(final_result)
-    return final_result
+    
+    
 def fisher_score(X, y):
     # Construct weight matrix W in a fisherScore way
     kwargs = {"neighbor_mode": "supervised", "fisher_score": True, 'y': y}
@@ -193,10 +188,15 @@ def imp_reliefF(X, Y):
     #revise.append(result)
     return revise
 
+def output_list(list_summary):
+    for i in list_summary:
+        output_sorted_result = get_list_func(i, True, 27)
+        print(output_sorted_result)
+
 if __name__ == "__main__":    
     # load data
-    filename = r"C:\Users\zhipe\Desktop\undersampling_Reoperation_1.csv"
-    names = ['Groups', 'SEX', 'AGE', 'BMI', 'SMOKE', 'DYSPNEA', 'FNSTATUS2', 'HXCOPD', 'ASCITES', 'HXCHF', 'HYPERMED', 'DIALYSIS', 'DISCANCR', 'WNDINF', 'STEROID', 'WTLOSS', 'BLEEDIS', 'TRANSFUS', 'PRSEPIS', 'ASACLAS', 'radial_all_yn', 'distal_all_yn', 'race_final', 'Emerg_yn', 'Diabetes_yn', 'Pre_staging', 'PATHO_staging', 'Mortality_1']
+    filename = r"C:\Users\zhipe\Desktop\target4.csv"
+    names = ['Groups', 'SEX', 'AGE', 'BMI', 'SMOKE', 'DYSPNEA', 'FNSTATUS2', 'HXCOPD', 'ASCITES', 'HXCHF', 'HYPERMED', 'DIALYSIS', 'DISCANCR', 'WNDINF', 'STEROID', 'WTLOSS', 'BLEEDIS', 'TRANSFUS', 'PRSEPIS', 'ASACLAS', 'radial_all_yn', 'distal_all_yn', 'race_final', 'Emerg_yn', 'Diabetes_yn', 'Pre_staging', 'PATHO_staging', 'Readmission_1']
     dataframe = read_csv(filename)
     array = dataframe.values
     for i in range(len(array)):
@@ -206,14 +206,35 @@ if __name__ == "__main__":
     #the last one is target
     X = array[:,0:27]
     Y = array[:,27]
-    fisherlist = fisher_score(X,Y)
-    relieflist = imp_reliefF(X, Y)
+    scaler = StandardScaler()
+    cols_to_norm = ['AGE','BMI']
+    X[:, 2:4] = scaler.fit_transform(X[:, 2:4])
     
+    #lalist = lasso(X,Y)
+    
+    rfmlist = RFM(X,Y)
+    print(get_list_func(rfmlist, False, 27))
+    # sorted_result = get_list_func(rfmlist, False, 27)
+    # print(sorted_result)
+    
+    # fisherlist = fisher_score(X,Y)
+    # relieflist = imp_reliefF(X, Y)
+    # filist = FI(X,Y)
+    # chi2list = chi_Square(X,Y)
+    # ANOVAlist = ANOVA(X,Y)
+    # mutuallist = mutual_information(X,Y)
+    # list_collector = [fisherlist, relieflist, filist, chi2list, ANOVAlist, mutuallist]
+    # output_list(list_collector)
+    #final = ['HXCHF', 'WNDINF', 'BLEEDIS', 'Emerg_yn', 'Diabetes_yn', 'WNDINF', 'Diabetes_yn', 'ASACLAS', 'BLEEDIS', 'BMI', 'HYPERMED', 'AGE', 'BMI', 'Groups', 'SEX', 'ASACLAS', 'BMI', 'AGE', 'Groups', 'PATHO_staging', 'Pre_staging', 'WNDINF', 'Diabetes_yn', 'BMI', 'BLEEDIS', 'DYSPNEA', 'WNDINF', 'Diabetes_yn', 'ASACLAS', 'BLEEDIS', 'BMI', 'distal_all_yn', 'SMOKE', 'BMI', 'PATHO_staging', 'ASACLAS']
+    #print(set(final))
+
+
+
     #result = [fisherlist, relieflist]
     #print(list(fisherlist))
     #print(fisherlist)
-    uslist = US(X,Y)
-    PRINTLIST(fisherlist, relieflist)
+    # uslist = US(X,Y)
+    # PRINTLIST(fisherlist, relieflist)
     # #print(uslist)
     # #print(get_list_func(uslist, True, 25))
     #rfmlist = RFM(X,Y)

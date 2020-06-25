@@ -5,6 +5,7 @@ from pandas import read_csv
 from pandas.plotting import scatter_matrix
 import pandas as pd
 from matplotlib import pyplot
+from itertools import permutations 
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import StratifiedKFold
@@ -20,6 +21,7 @@ from sklearn.svm import SVC
 from sklearn.metrics import r2_score
 from sklearn.metrics import mean_squared_error
 from sklearn import preprocessing
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from sklearn import pipeline
 from sklearn import ensemble
 from sklearn import model_selection
@@ -73,7 +75,11 @@ def ensemble_learning_with_cross_validation(X,y):
 
 def ensemble_learning_with_normal(X,y,split):
     X_train, X_test, y_train, y_test = train_test_split(X,y,test_size=split, random_state=42, stratify=None)
-    #print(len(y_test))
+    #There is no need for normalization since most of them binary value and categorized value
+
+
+
+
     conf_mat_list = []
     model1 = svm.SVC(kernel='linear', C=1)
     model2 = KNeighborsClassifier(3)
@@ -104,13 +110,13 @@ def ensemble_learning_with_normal(X,y,split):
 def MEAN(filename, feature_column, split, target):
     data = pd.read_csv(filename)
     y = data[target]
-    #X = data.drop(['Readmission_1'], axis=1)
-    #['Groups', 'SEX', 'AGE', 'BMI', 'SMOKE', 'DYSPNEA', 'FNSTATUS2', 'HXCOPD', 'ASCITES', 'HXCHF', 'HYPERMED', 'DIALYSIS', 'DISCANCR', 'WNDINF', 'STEROID', 'WTLOSS', 'BLEEDIS', 'TRANSFUS', 'PRSEPIS', 'ASACLAS', 'radial_all_yn', 'distal_all_yn', 'race_final', 'Emerg_yn', 'Diabetes_yn', 'Pre_staging', 'PATHO_staging']
     X = data.loc[:,feature_column]
-    # we will use KNeighborsClassifier, RandomForestClassifier, LinearDiscriminantAnalysis, NuSVC
-    #print('running')
-    #y_pred = cross_val_predict(model, X, y, cv=3)
+    #if feature_column.__contains__('AGE') and 
+    scaler = StandardScaler()
+    #cols_to_norm = ['AGE','BMI']
+    #X[cols_to_norm] = scaler.fit_transform(X[cols_to_norm])
     conf_mat_list = ensemble_learning_with_normal(X,y,split)
+
     #print(conf_mat_list)
     tn = 0
     fp = 0
@@ -128,47 +134,98 @@ def MEAN(filename, feature_column, split, target):
     fn = math.floor(fn / 4)
     tp = math.ceil(tp / 4)
     result = [[tn, fp], [fn, tp]]
-    print(result)
+    #print(result)
     return result
-    #print('finished')
+
+def permu_result(filename, sum_column, split1, target):
+    perm = permutations(sum_column, 2)
+    i = 3
+    #print(list(perm))
+    # for i in list(perm):
+    #     print(list(i))
+    final = []
+    while i < len(sum_column):
+        print("Permutation length is " + str(i))
+        perm = permutations(sum_column, i)
+        for j in list(perm):
+            print(list(j))
+            result = MEAN(filename, list(j), split1, target)
+            print(result)
+            if(result[0][0] > 319 and result[1][1] > 316):
+                candidates = list(j) + result
+                final.append(candidates)
+                #print(list(j))
+                #print(result)
+        print("===================finished permutaion====================")
+        print()
+        print()
+        i+=1 
+    print()
+    print()
+    print("************************Here is the good result*************************")
+    if len(final) == 0:
+        print("nothing found")
+    else:
+        df = pd.DataFrame(final)
+        df.to_excel(r"C:\Users\zhipe\Desktop\good_result.xlsx", index = False)
+
+
 if __name__ == "__main__":
-    sum_column =[['DISCANCR', 'BLEEDIS', 'race_final', 'Groups', 'radial_all_yn', 'HXCHF', 'DIALYSIS', 'Pre_staging', 'PRSEPIS', 'AGE', 'ASACLAS', 'DYSPNEA', 'HXCOPD', 'STEROID', 'FNSTATUS2', 'ASCITES', 'TRANSFUS', 'BMI', 'HYPERMED', 'WTLOSS', 'WNDINF', 'SEX', 'SMOKE', 'Emerg_yn', 'distal_all_yn'], ['DISCANCR', 'BLEEDIS', 'race_final', 'Groups', 'radial_all_yn', 'HXCHF', 'DIALYSIS', 'Pre_staging', 'PRSEPIS', 'AGE', 'ASACLAS', 'DYSPNEA', 'HXCOPD', 'STEROID', 'FNSTATUS2', 'ASCITES', 'TRANSFUS', 'BMI', 'HYPERMED', 'WTLOSS'], ['AGE', 'Groups', 'Diabetes_yn', 'DISCANCR', 'SEX', 'WTLOSS', 'BMI', 'race_final', 'Emerg_yn', 'DYSPNEA', 'STEROID', 'HXCOPD', 'radial_all_yn', 'PRSEPIS', 'Pre_staging', 'HXCHF', 'TRANSFUS', 'FNSTATUS2', 'ASCITES', 'BLEEDIS', 'HYPERMED', 'WNDINF', 
-'DIALYSIS', 'distal_all_yn', 'PATHO_staging'], ['AGE', 'Groups', 'Diabetes_yn', 'DISCANCR', 'SEX', 'WTLOSS', 'BMI', 'race_final', 'Emerg_yn', 'DYSPNEA', 'STEROID', 'HXCOPD', 'radial_all_yn', 'PRSEPIS', 'Pre_staging', 'HXCHF', 'TRANSFUS', 'FNSTATUS2', 'ASCITES', 'BLEEDIS']]
-    filename = r"C:\Users\zhipe\Desktop\target3.csv"
+    #feature_collections = ['Groups', 'SEX', 'AGE', 'BMI', 'SMOKE', 'DYSPNEA', 'FNSTATUS2', 'HXCOPD', 'ASCITES', 'HXCHF', 'HYPERMED', 'DIALYSIS', 'DISCANCR', 'WNDINF', 'STEROID', 'WTLOSS', 'BLEEDIS', 'TRANSFUS', 'PRSEPIS', 'ASACLAS', 'radial_all_yn', 'distal_all_yn', 'race_final', 'Emerg_yn', 'Diabetes_yn', 'Pre_staging', 'PATHO_staging']
+    sum_column = ['HXCHF', 'WNDINF', 'BLEEDIS', 'Emerg_yn', 'Diabetes_yn', 'DYSPNEA', 'WTLOSS', 'ASACLAS', 'FNSTATUS2', 'STEROID', 'race_final', 'HXCOPD', 'TRANSFUS', 'DISCANCR', 'ASCITES', 'HYPERMED', 'DIALYSIS', 'PRSEPIS', 'PATHO_staging', 'SMOKE', 'Groups', 'distal_all_yn', 'radial_all_yn', 'SEX', 'Pre_staging','BMI','AGE']
+    #sum_column.reverse()
+    filename = r"C:\Users\zhipe\Desktop\oversampling_readmission_1.csv"
     split1 = 0.3
     split2 = 0.2
-    target = 'Reoperation_1'
-    print('Mix result for 70/30: ')
-    print('Top25_Fisher')
-    r1 = MEAN(filename, sum_column[0], split1, target)
-    print('Top20_Fisher')
-    r2 = MEAN(filename, sum_column[1], split1, target)
-    print('Top25_Relief')
-    r3 = MEAN(filename, sum_column[2], split1, target)
-    print('Top20_Relief')
-    r4 = MEAN(filename, sum_column[3], split1, target)
-    print('Mix result for 80/20: ')
-    print('Top25_Fisher')
-    r5 = MEAN(filename, sum_column[0], split2, target)
-    print('Top20_Fisher')
-    r6 = MEAN(filename, sum_column[1], split2, target)
-    print('Top25_Relief')
-    r7 = MEAN(filename, sum_column[2], split2, target)
-    print('Top20_Relief')
-    r8 = MEAN(filename, sum_column[3], split2, target)
+    target = 'Readmission_1'
+    i = 27
+    while i > 0:
+        print("number of features " + str(i))
+        sub_features = sum_column[0:i]
+        r = MEAN(filename, sub_features, split1, target)
+        print(r)
+        i -= 1
+    
 
-    sum = [r1, r2, r3, r4, r5, r6, r7, r8]
-    #print(sum)
-    target_list =sum
-    result = []
-    for a in target_list:
-        #print(type(a[0][0]))
-        score = (a[0][0] + a[1][1]) / (a[0][0] + a[1][1] + a[0][1] + a[1][0])
-        result.append(score)
-    print(result)
-    sum.append(result)
-    df = pd.DataFrame(sum)
-    df.to_excel(r"C:\Users\zhipe\Desktop\result1.xlsx", index = False)
+    #col = ['SMOKE', 'AGE','Diabetes_yn', 'WNDINF']
+    # col = ['Diabetes_yn', 'WNDINF']
+    # result = MEAN(filename, col, split1, target)
+    
+    
+    
+
+    # print('Mix result for 70/30: ')
+    # print('Top25_Fisher')
+    # r1 = MEAN(filename, sum_column[0], split1, target)
+    # print('Top20_Fisher')
+    # r2 = MEAN(filename, sum_column[1], split1, target)
+    # print('Top25_Relief')
+    # r3 = MEAN(filename, sum_column[2], split1, target)
+    # print('Top20_Relief')
+    # r4 = MEAN(filename, sum_column[3], split1, target)
+    # print('Mix result for 80/20: ')
+    # print('Top25_Fisher')
+    # r5 = MEAN(filename, sum_column[0], split2, target)
+    # print('Top20_Fisher')
+    # r6 = MEAN(filename, sum_column[1], split2, target)
+    # print('Top25_Relief')
+    # r7 = MEAN(filename, sum_column[2], split2, target)
+    # print('Top20_Relief')
+    # r8 = MEAN(filename, sum_column[3], split2, target)
+
+    # sum = [r1, r2, r3, r4, r5, r6, r7, r8]
+    # #print(sum)
+    # target_list =sum
+    # result = []
+    # for a in target_list:
+    #     #print(type(a[0][0]))
+    #     score = (a[0][0] + a[1][1]) / (a[0][0] + a[1][1] + a[0][1] + a[1][0])
+    #     result.append(score)
+    # print(result)
+    # #sum.append(result)
+    # df = pd.DataFrame(result)
+    # #print(sum)
+    # df.to_excel(r"C:\Users\zhipe\Desktop\result1.xlsx", index = False)
 
 
 
