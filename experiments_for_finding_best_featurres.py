@@ -75,11 +75,6 @@ def ensemble_learning_with_cross_validation(X,y):
 
 def ensemble_learning_with_normal(X,y,split):
     X_train, X_test, y_train, y_test = train_test_split(X,y,test_size=split, random_state=42, stratify=None)
-    #There is no need for normalization since most of them binary value and categorized value
-
-
-
-
     conf_mat_list = []
     model1 = svm.SVC(kernel='linear', C=1)
     model2 = KNeighborsClassifier(3)
@@ -110,11 +105,11 @@ def ensemble_learning_with_normal(X,y,split):
 def MEAN(filename, feature_column, split, target):
     data = pd.read_csv(filename)
     y = data[target]
-    X = data.loc[:,feature_column]
-    #if feature_column.__contains__('AGE') and 
+    X = data.drop([target], axis=1)
     scaler = StandardScaler()
-    #cols_to_norm = ['AGE','BMI']
-    #X[cols_to_norm] = scaler.fit_transform(X[cols_to_norm])
+    X.iloc[:, 2:4] = scaler.fit_transform(X.iloc[:, 2:4])
+    X = data.loc[:,feature_column]
+    
     conf_mat_list = ensemble_learning_with_normal(X,y,split)
 
     #print(conf_mat_list)
@@ -172,19 +167,21 @@ def permu_result(filename, sum_column, split1, target):
 
 if __name__ == "__main__":
     #feature_collections = ['Groups', 'SEX', 'AGE', 'BMI', 'SMOKE', 'DYSPNEA', 'FNSTATUS2', 'HXCOPD', 'ASCITES', 'HXCHF', 'HYPERMED', 'DIALYSIS', 'DISCANCR', 'WNDINF', 'STEROID', 'WTLOSS', 'BLEEDIS', 'TRANSFUS', 'PRSEPIS', 'ASACLAS', 'radial_all_yn', 'distal_all_yn', 'race_final', 'Emerg_yn', 'Diabetes_yn', 'Pre_staging', 'PATHO_staging']
-    sum_column = ['HXCHF', 'WNDINF', 'BLEEDIS', 'Emerg_yn', 'Diabetes_yn', 'DYSPNEA', 'WTLOSS', 'ASACLAS', 'FNSTATUS2', 'STEROID', 'race_final', 'HXCOPD', 'TRANSFUS', 'DISCANCR', 'ASCITES', 'HYPERMED', 'DIALYSIS', 'PRSEPIS', 'PATHO_staging', 'SMOKE', 'Groups', 'distal_all_yn', 'radial_all_yn', 'SEX', 'Pre_staging','BMI','AGE']
+    sum_column = ['WNDINF', 'Diabetes_yn', 'ASACLAS', 'BLEEDIS', 'BMI', 'HYPERMED']
     #sum_column.reverse()
     filename = r"C:\Users\zhipe\Desktop\oversampling_readmission_1.csv"
     split1 = 0.3
     split2 = 0.2
     target = 'Readmission_1'
-    i = 27
-    while i > 0:
-        print("number of features " + str(i))
-        sub_features = sum_column[0:i]
-        r = MEAN(filename, sub_features, split1, target)
-        print(r)
-        i -= 1
+    r1 = MEAN(filename, sum_column, split1, target)
+    print(r1)
+    # i = len(sum_column)
+    # while i > 0:
+    #     print("number of features " + str(len(sum_column)))
+    #     sub_features = sum_column[0:i]
+    #     r = MEAN(filename, sub_features, split1, target)
+    #     print(r)
+    #     i -= 1
     
 
     #col = ['SMOKE', 'AGE','Diabetes_yn', 'WNDINF']
