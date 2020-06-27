@@ -9,9 +9,7 @@ from itertools import permutations
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import StratifiedKFold
-from sklearn.metrics import classification_report
-from sklearn.metrics import confusion_matrix
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import classification_report, accuracy_score, confusion_matrix
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.neighbors import KNeighborsClassifier
@@ -30,10 +28,7 @@ from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.metrics import precision_score
-from sklearn.metrics import average_precision_score
-from sklearn.metrics import recall_score
-from sklearn.metrics import f1_score
+from sklearn.metrics import precision_score, average_precision_score, recall_score, f1_score
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.metrics import confusion_matrix
 from sklearn.ensemble import VotingClassifier
@@ -106,6 +101,7 @@ def MEAN(filename, feature_column, split, target):
     data = pd.read_csv(filename)
     y = data[target]
     X = data.drop([target], axis=1)
+    #data normalization
     scaler = StandardScaler()
     X.iloc[:, 2:4] = scaler.fit_transform(X.iloc[:, 2:4])
     X = data.loc[:,feature_column]
@@ -169,7 +165,7 @@ if __name__ == "__main__":
     #feature_collections = ['Groups', 'SEX', 'AGE', 'BMI', 'SMOKE', 'DYSPNEA', 'FNSTATUS2', 'HXCOPD', 'ASCITES', 'HXCHF', 'HYPERMED', 'DIALYSIS', 'DISCANCR', 'WNDINF', 'STEROID', 'WTLOSS', 'BLEEDIS', 'TRANSFUS', 'PRSEPIS', 'ASACLAS', 'radial_all_yn', 'distal_all_yn', 'race_final', 'Emerg_yn', 'Diabetes_yn', 'Pre_staging', 'PATHO_staging']
     sum_column = ['WNDINF', 'Diabetes_yn', 'ASACLAS', 'BLEEDIS', 'BMI', 'HYPERMED']
     #sum_column.reverse()
-    filename = r"C:\Users\zhipe\Desktop\oversampling_readmission_1.csv"
+    filename = r"/Users/zhipengwang/PycharmProjects/UNMC_Data_Analysis/data/oversampling_readmission_1.csv"
     split1 = 0.3
     split2 = 0.2
     target = 'Readmission_1'

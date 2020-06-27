@@ -3,7 +3,7 @@ from numpy import set_printoptions
 import numpy as np
 from scipy.sparse import *
 from skfeature.utility.construct_W import construct_W
-from skfeature.function.similarity_based.lap_score import lap_score, feature_ranking
+#from skfeature.function.similarity_based.lap_score import lap_score, feature_ranking
 from skfeature.utility.construct_W import construct_W
 from sklearn.feature_selection import SelectKBest
 from skfeature.function.similarity_based.reliefF import reliefF
@@ -187,7 +187,7 @@ def imp_reliefF(X, Y):
     revise = covertToList(relF)
     #revise.append(result)
     return revise
-
+#sort all the features based on the ranking
 def output_list(list_summary):
     for i in list_summary:
         output_sorted_result = get_list_func(i, True, 27)
@@ -195,7 +195,7 @@ def output_list(list_summary):
 
 if __name__ == "__main__":    
     # load data
-    filename = r"C:\Users\zhipe\Desktop\target4.csv"
+    filename = r"/Users/zhipengwang/PycharmProjects/UNMC_Data_Analysis/data/oversampling_Readmission_1.csv"
     names = ['Groups', 'SEX', 'AGE', 'BMI', 'SMOKE', 'DYSPNEA', 'FNSTATUS2', 'HXCOPD', 'ASCITES', 'HXCHF', 'HYPERMED', 'DIALYSIS', 'DISCANCR', 'WNDINF', 'STEROID', 'WTLOSS', 'BLEEDIS', 'TRANSFUS', 'PRSEPIS', 'ASACLAS', 'radial_all_yn', 'distal_all_yn', 'race_final', 'Emerg_yn', 'Diabetes_yn', 'Pre_staging', 'PATHO_staging', 'Readmission_1']
     dataframe = read_csv(filename)
     array = dataframe.values
@@ -209,11 +209,12 @@ if __name__ == "__main__":
     scaler = StandardScaler()
     cols_to_norm = ['AGE','BMI']
     X[:, 2:4] = scaler.fit_transform(X[:, 2:4])
-    
+
+
+
     #lalist = lasso(X,Y)
-    
-    rfmlist = RFM(X,Y)
-    print(get_list_func(rfmlist, False, 27))
+    # rfmlist = RFM(X,Y)
+    # print(get_list_func(rfmlist, False, 27))
     # sorted_result = get_list_func(rfmlist, False, 27)
     # print(sorted_result)
     
