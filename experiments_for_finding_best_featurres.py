@@ -97,14 +97,7 @@ def ensemble_learning_with_normal(X,y,split):
     conf_mat_list.append(conf_mat4)
     return conf_mat_list
 
-def MEAN(filename, feature_column, split, target):
-    data = pd.read_csv(filename)
-    y = data[target]
-    X = data.drop([target], axis=1)
-    #data normalization
-    scaler = StandardScaler()
-    X.iloc[:, 2:4] = scaler.fit_transform(X.iloc[:, 2:4])
-    X = data.loc[:,feature_column]
+def GENERATE_CONFUSION_MATRIX(X, y, split, target):
     
     conf_mat_list = ensemble_learning_with_normal(X,y,split)
 
@@ -140,7 +133,7 @@ def permu_result(filename, sum_column, split1, target):
         perm = permutations(sum_column, i)
         for j in list(perm):
             print(list(j))
-            result = MEAN(filename, list(j), split1, target)
+            result = GENERATE_CONFUSION_MATRIX(filename, list(j), split1, target)
             print(result)
             if(result[0][0] > 319 and result[1][1] > 316):
                 candidates = list(j) + result
@@ -162,63 +155,32 @@ def permu_result(filename, sum_column, split1, target):
 
 
 if __name__ == "__main__":
-    #feature_collections = ['Groups', 'SEX', 'AGE', 'BMI', 'SMOKE', 'DYSPNEA', 'FNSTATUS2', 'HXCOPD', 'ASCITES', 'HXCHF', 'HYPERMED', 'DIALYSIS', 'DISCANCR', 'WNDINF', 'STEROID', 'WTLOSS', 'BLEEDIS', 'TRANSFUS', 'PRSEPIS', 'ASACLAS', 'radial_all_yn', 'distal_all_yn', 'race_final', 'Emerg_yn', 'Diabetes_yn', 'Pre_staging', 'PATHO_staging']
-    sum_column = ['WNDINF', 'Diabetes_yn', 'ASACLAS', 'BLEEDIS', 'BMI', 'HYPERMED']
-    #sum_column.reverse()
-    filename = r"/Users/zhipengwang/PycharmProjects/UNMC_Data_Analysis/data/oversampling_readmission_1.csv"
+    feature_collections = ['Groups', 'SEX', 'AGE', 'BMI', 'SMOKE', 'DYSPNEA', 'FNSTATUS2', 'HXCOPD', 'ASCITES', 'HXCHF', 'HYPERMED', 'DIALYSIS', 'DISCANCR', 'WNDINF', 'STEROID', 'WTLOSS', 'BLEEDIS', 'TRANSFUS', 'PRSEPIS', 'ASACLAS', 'radial_all_yn', 'distal_all_yn', 'race_final', 'Emerg_yn', 'Diabetes_yn', 'Pre_staging', 'PATHO_staging']
+    noisy_features = ['AGE', 'SMOKE', 'FNSTATUS2', 'HXCOPD', 'DIALYSIS', 'TRANSFUS', 'radial_all_yn', 'PRSEPIS']
+    candidates_features = ['BMI', 'Groups', 'BLEEDIS', 'WTLOSS', 'HXCHF', 'ASACLAS', 'SEX', 'DYSPNEA', 'ASCITES', 'HYPERMED', 'DISCANCR', 'WNDINF', 'STEROID', 'distal_all_yn', 'race_final', 'Emerg_yn', 'Diabetes_yn', 'Pre_staging', 'PATHO_staging']
+    target = 'Readmission_1'
+    filename = r"/Users/zhipengwang/PycharmProjects/UNMC_Data_Analysis/data/oversampling_Readmission_1.csv"
+    data = pd.read_csv(filename)
+    y = data[target]
+    X = data.drop([target], axis=1)
+    #data normalization
+    scaler = StandardScaler()
+    #do normalization for BMI and AGE
+    X.iloc[:, 2:4] = scaler.fit_transform(X.iloc[:, 2:4])
+    #choose the selected features
+    #X = data.loc[:,candidates_features]
+    #print(X.axes)
     split1 = 0.3
     split2 = 0.2
-    target = 'Readmission_1'
-    r1 = MEAN(filename, sum_column, split1, target)
-    print(r1)
-    # i = len(sum_column)
-    # while i > 0:
-    #     print("number of features " + str(len(sum_column)))
-    #     sub_features = sum_column[0:i]
-    #     r = MEAN(filename, sub_features, split1, target)
-    #     print(r)
-    #     i -= 1
-    
-
-    #col = ['SMOKE', 'AGE','Diabetes_yn', 'WNDINF']
-    # col = ['Diabetes_yn', 'WNDINF']
-    # result = MEAN(filename, col, split1, target)
-    
-    
-    
-
-    # print('Mix result for 70/30: ')
-    # print('Top25_Fisher')
-    # r1 = MEAN(filename, sum_column[0], split1, target)
-    # print('Top20_Fisher')
-    # r2 = MEAN(filename, sum_column[1], split1, target)
-    # print('Top25_Relief')
-    # r3 = MEAN(filename, sum_column[2], split1, target)
-    # print('Top20_Relief')
-    # r4 = MEAN(filename, sum_column[3], split1, target)
-    # print('Mix result for 80/20: ')
-    # print('Top25_Fisher')
-    # r5 = MEAN(filename, sum_column[0], split2, target)
-    # print('Top20_Fisher')
-    # r6 = MEAN(filename, sum_column[1], split2, target)
-    # print('Top25_Relief')
-    # r7 = MEAN(filename, sum_column[2], split2, target)
-    # print('Top20_Relief')
-    # r8 = MEAN(filename, sum_column[3], split2, target)
-
-    # sum = [r1, r2, r3, r4, r5, r6, r7, r8]
-    # #print(sum)
-    # target_list =sum
-    # result = []
-    # for a in target_list:
-    #     #print(type(a[0][0]))
-    #     score = (a[0][0] + a[1][1]) / (a[0][0] + a[1][1] + a[0][1] + a[1][0])
-    #     result.append(score)
-    # print(result)
-    # #sum.append(result)
-    # df = pd.DataFrame(result)
-    # #print(sum)
-    # df.to_excel(r"C:\Users\zhipe\Desktop\result1.xlsx", index = False)
+    #split3 = 0.33
+    i = len(candidates_features)
+    while i > 0:
+        print("number of features " + str(i))
+        sub_features = candidates_features[0:i]
+        X = data.loc[:, sub_features]
+        r = GENERATE_CONFUSION_MATRIX(X, y, split1, target)
+        print(r)
+        i -= 1
 
 
 

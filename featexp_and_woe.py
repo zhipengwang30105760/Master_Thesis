@@ -25,8 +25,9 @@ def featexp_method(dataframe, target_name):
     data_test = X_test.reset_index(drop=True)
     data_test['Readmission_1'] = y_test.reset_index(drop=True)
 
-    get_univariate_plots(data=data_train, target_col='Readmission_1', features_list=data_train.columns[21:22],
-                         data_test=data_test)
+    #get the plot
+    # get_univariate_plots(data=data_train, target_col='Readmission_1', features_list=data_train.columns[21:22],
+    #                      data_test=data_test)
 
     stats = get_trend_stats(data_train, target_col='Readmission_1', data_test=data_test)
     print(stats)
@@ -42,9 +43,10 @@ def woe_method(dataframes, target_name):
 if __name__ == "__main__":
     # load data
     filename = r"/Users/zhipengwang/PycharmProjects/UNMC_Data_Analysis/data/oversampling_Readmission_1.csv"
-    names = ['Groups', 'SEX', 'AGE', 'BMI', 'SMOKE', 'DYSPNEA', 'FNSTATUS2', 'HXCOPD', 'ASCITES', 'HXCHF', 'HYPERMED', 'DIALYSIS', 'DISCANCR', 'WNDINF', 'STEROID', 'WTLOSS', 'BLEEDIS', 'TRANSFUS', 'PRSEPIS', 'ASACLAS', 'radial_all_yn', 'distal_all_yn', 'race_final', 'Emerg_yn', 'Diabetes_yn', 'Pre_staging', 'PATHO_staging', 'Readmission_1']
+    feature_collections = ['Groups', 'SEX', 'AGE', 'BMI', 'SMOKE', 'DYSPNEA', 'FNSTATUS2', 'HXCOPD', 'ASCITES', 'HXCHF', 'HYPERMED', 'DIALYSIS', 'DISCANCR', 'WNDINF', 'STEROID', 'WTLOSS', 'BLEEDIS', 'TRANSFUS', 'PRSEPIS', 'ASACLAS', 'radial_all_yn', 'distal_all_yn', 'race_final', 'Emerg_yn', 'Diabetes_yn', 'Pre_staging', 'PATHO_staging', 'Readmission_1']
     dataframe = read_csv(filename)
     array = dataframe.values
-    target = 'Readmission_1'
-    #featexp_method(dataframe, target)
-    woe_method(dataframe, target)
+    target_name = 'Readmission_1'
+    featexp_method(dataframe, target_name)
+    #woe_method(dataframe, target_name)
+

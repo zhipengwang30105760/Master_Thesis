@@ -47,7 +47,3 @@ if __name__ == "__main__":
     print("recall0 is:  %.2f" % recall_score0)
     print("precision0 is:  %.2f" % precision_score0)
     print("gmean0 is:  %.2f" % gmean_score0)
-    # print(TP1)
-    # print(FN1)
-    # print(FP1)
-    # print(TN1)

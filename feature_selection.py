@@ -116,9 +116,12 @@ def lasso(X,Y):
     print(result)
     return result
 
-
+#format the output function
 def get_list_func(listName, reverse, Number):
-    columns = ['Groups', 'SEX', 'AGE', 'BMI', 'SMOKE', 'DYSPNEA', 'FNSTATUS2', 'HXCOPD', 'ASCITES', 'HXCHF', 'HYPERMED', 'DIALYSIS', 'DISCANCR', 'WNDINF', 'STEROID', 'WTLOSS', 'BLEEDIS', 'TRANSFUS', 'PRSEPIS', 'ASACLAS', 'radial_all_yn', 'distal_all_yn', 'race_final', 'Emerg_yn', 'Diabetes_yn', 'Pre_staging', 'PATHO_staging']
+    columns = ['Groups', 'SEX', 'BMI', 'DYSPNEA', 'ASCITES', 'HXCHF', 'HYPERMED',
+       'DISCANCR', 'WNDINF', 'STEROID', 'WTLOSS', 'BLEEDIS', 'ASACLAS',
+       'distal_all_yn', 'race_final', 'Emerg_yn', 'Diabetes_yn', 'Pre_staging',
+       'PATHO_staging']
     refer = {}
     for key, value in zip(columns, listName):
         add_value = value[0]
@@ -128,58 +131,6 @@ def get_list_func(listName, reverse, Number):
     for i in sort_orders[0:Number]:
         result.append(i[0])
     return result
-
-
-
-def PRINTLIST(list1, list2):
-    # print('for us')
-    feature_column_25_1 = get_list_func(list1, True, 25)
-    #print(feature_column_25_1)
-    feature_column_20_1 = get_list_func(list1, True, 20)
-    #print(feature_column_20_1)
-    #print('for rfm')
-    feature_column_25_2 = get_list_func(list2, False, 25)
-    #print(feature_column_25_2)
-    feature_column_20_2 = get_list_func(list2, False, 20)
-    #print(feature_column_20_2)
-   # print('for fi')
-    #feature_column_25_3 = get_list_func(list3, True, 25)
-    #print(feature_column_25_3)
-    #feature_column_20_3 = get_list_func(list3, True, 20)
-    #print(feature_column_20_3)
-    #summary = [feature_column_25_1, feature_column_20_1, feature_column_25_2, feature_column_20_2, feature_column_25_3, feature_column_20_3]
-    summary=[feature_column_25_1, feature_column_20_1, feature_column_25_2, feature_column_20_2]
-    print(summary)
-    
-    
-def fisher_score(X, y):
-    # Construct weight matrix W in a fisherScore way
-    kwargs = {"neighbor_mode": "supervised", "fisher_score": True, 'y': y}
-    W = construct_W(X, **kwargs)
-
-    # build the diagonal D matrix from affinity matrix W
-    D = np.array(W.sum(axis=1))
-    L = W
-    tmp = np.dot(np.transpose(D), X)
-    D = diags(np.transpose(D), [0])
-    Xt = np.transpose(X)
-    t1 = np.transpose(np.dot(Xt, D.todense()))
-    t2 = np.transpose(np.dot(Xt, L.todense()))
-    # compute the numerator of Lr
-    D_prime = np.sum(np.multiply(t1, X), 0) - np.multiply(tmp, tmp)/D.sum()
-    # compute the denominator of Lr
-    L_prime = np.sum(np.multiply(t2, X), 0) - np.multiply(tmp, tmp)/D.sum()
-    # avoid the denominator of Lr to be 0
-    D_prime[D_prime < 1e-12] = 10000
-    lap_score = 1 - np.array(np.multiply(L_prime, 1/D_prime))[0, :]
-
-    # compute fisher score from laplacian score, where fisher_score = 1/lap_score - 1
-    score = 1.0/lap_score - 1
-    fisher = [['Fisher_score']]
-    revise = covertToList(score)
-    #revise = word_tokenize(fit.scores_)
-    #revise.append(fisher)
-    return revise
 
 def imp_reliefF(X, Y):
     relF = reliefF(X, Y)
@@ -193,41 +144,56 @@ def output_list(list_summary):
         output_sorted_result = get_list_func(i, True, 27)
         print(output_sorted_result)
 
+def write_output(output_content):
+    df = pd.DataFrame(output_content,
+                      columns=['Groups', 'SEX', 'AGE', 'BMI', 'SMOKE', 'DYSPNEA', 'FNSTATUS2', 'HXCOPD', 'ASCITES',
+                               'HXCHF', 'HYPERMED', 'DIALYSIS', 'DISCANCR', 'WNDINF', 'STEROID', 'WTLOSS', 'BLEEDIS',
+                               'TRANSFUS', 'PRSEPIS', 'ASACLAS', 'radial_all_yn', 'distal_all_yn', 'race_final',
+                               'Emerg_yn', 'Diabetes_yn', 'Pre_staging', 'PATHO_staging'])
+    df.to_excel(r"/Users/zhipengwang/PycharmProjects/UNMC_Data_Analysis/data/temporary_output.xlsx", index=False)
+
 if __name__ == "__main__":    
     # load data
     filename = r"/Users/zhipengwang/PycharmProjects/UNMC_Data_Analysis/data/oversampling_Readmission_1.csv"
-    names = ['Groups', 'SEX', 'AGE', 'BMI', 'SMOKE', 'DYSPNEA', 'FNSTATUS2', 'HXCOPD', 'ASCITES', 'HXCHF', 'HYPERMED', 'DIALYSIS', 'DISCANCR', 'WNDINF', 'STEROID', 'WTLOSS', 'BLEEDIS', 'TRANSFUS', 'PRSEPIS', 'ASACLAS', 'radial_all_yn', 'distal_all_yn', 'race_final', 'Emerg_yn', 'Diabetes_yn', 'Pre_staging', 'PATHO_staging', 'Readmission_1']
+    feature_collections = ['Groups', 'SEX', 'AGE', 'BMI', 'SMOKE', 'DYSPNEA', 'FNSTATUS2', 'HXCOPD', 'ASCITES', 'HXCHF', 'HYPERMED', 'DIALYSIS', 'DISCANCR', 'WNDINF', 'STEROID', 'WTLOSS', 'BLEEDIS', 'TRANSFUS', 'PRSEPIS', 'ASACLAS', 'radial_all_yn', 'distal_all_yn', 'race_final', 'Emerg_yn', 'Diabetes_yn', 'Pre_staging', 'PATHO_staging']
+    noisy_features =['AGE', 'SMOKE', 'FNSTATUS2', 'HXCOPD', 'DIALYSIS', 'TRANSFUS', 'radial_all_yn', 'PRSEPIS']
+    candidates_features = [x for x in feature_collections if x not in noisy_features]
+
     dataframe = read_csv(filename)
-    array = dataframe.values
-    for i in range(len(array)):
-        for j in range(len(array[i])):
-            value = float(array[i][j])
-            array[i][j] = value
-    #the last one is target
-    X = array[:,0:27]
-    Y = array[:,27]
+    target = 'Readmission_1'
+    Y_dataframe = dataframe[target]
+    X_dataframe = dataframe.drop([target], axis=1)
+    # data normalization
     scaler = StandardScaler()
-    cols_to_norm = ['AGE','BMI']
-    X[:, 2:4] = scaler.fit_transform(X[:, 2:4])
+    X_dataframe.iloc[:, 2:4] = scaler.fit_transform(X_dataframe.iloc[:, 2:4])
+    X_dataframe = dataframe.loc[:, candidates_features]
+
+    X = X_dataframe.values
+    Y = Y_dataframe.values
 
 
+    #print(feature_collections)
+    # lalist = lasso(X,Y)
+    # for i in range(len(lalist)):
+    #     if lalist[i] == False:
+    #         print('index is ' + str(i))
+    #         print('feature name is ' + feature_collections[i])
+    #         print(lalist[i])
 
-    #lalist = lasso(X,Y)
-    # rfmlist = RFM(X,Y)
-    # print(get_list_func(rfmlist, False, 27))
-    # sorted_result = get_list_func(rfmlist, False, 27)
-    # print(sorted_result)
+    mutuallist = mutual_information(X, Y)
+    sorted_result = get_list_func(mutuallist, True, 19)
+    print(sorted_result)
     
     # fisherlist = fisher_score(X,Y)
     # relieflist = imp_reliefF(X, Y)
     # filist = FI(X,Y)
-    # chi2list = chi_Square(X,Y)
+    #
     # ANOVAlist = ANOVA(X,Y)
     # mutuallist = mutual_information(X,Y)
-    # list_collector = [fisherlist, relieflist, filist, chi2list, ANOVAlist, mutuallist]
+    # list_collector = [fisherlist, relieflist, filist, ANOVAlist, mutuallist]
+    # for l in list_collector:
+    #     print(l)
     # output_list(list_collector)
-    #final = ['HXCHF', 'WNDINF', 'BLEEDIS', 'Emerg_yn', 'Diabetes_yn', 'WNDINF', 'Diabetes_yn', 'ASACLAS', 'BLEEDIS', 'BMI', 'HYPERMED', 'AGE', 'BMI', 'Groups', 'SEX', 'ASACLAS', 'BMI', 'AGE', 'Groups', 'PATHO_staging', 'Pre_staging', 'WNDINF', 'Diabetes_yn', 'BMI', 'BLEEDIS', 'DYSPNEA', 'WNDINF', 'Diabetes_yn', 'ASACLAS', 'BLEEDIS', 'BMI', 'distal_all_yn', 'SMOKE', 'BMI', 'PATHO_staging', 'ASACLAS']
-    #print(set(final))
 
 
 
@@ -244,17 +210,4 @@ if __name__ == "__main__":
     # PRINTLIST(uslist, rfmlist, filist)
     #print(filist)
     #result = [uslist, rfmlist, filist]
-    
-    # chi2list = chi_Square(X,Y)
-    # ANOVAlist = ANOVA(X,Y)
-    # mutuallist = mutual_information(X,Y)
-    # set1 = find_Common(chi2list, ANOVAlist, mutuallist)
-    # set2 = find_Common(uslist, rfmlist, filist)
-    # list(set1).append(list(set2))
-    # print(list(set(set1)))
-    #PRINTLIST(chi2list, ANOVAlist, mutuallist)
-    #result = [chi2list, ANOVAlist, mutuallist]
-    #print(len(relieflist))
-    #df = pd.DataFrame(result, columns = ['Groups', 'SEX', 'AGE', 'BMI', 'SMOKE', 'DYSPNEA', 'FNSTATUS2', 'HXCOPD', 'ASCITES', 'HXCHF', 'HYPERMED', 'DIALYSIS', 'DISCANCR', 'WNDINF', 'STEROID', 'WTLOSS', 'BLEEDIS', 'TRANSFUS', 'PRSEPIS', 'ASACLAS', 'radial_all_yn', 'distal_all_yn', 'race_final', 'Emerg_yn', 'Diabetes_yn', 'Pre_staging', 'PATHO_staging'])
-    #df.to_excel(r"C:\Users\zhipe\Desktop\result3.xlsx", index = False)
  
