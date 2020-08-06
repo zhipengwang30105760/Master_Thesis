@@ -98,7 +98,7 @@ def ensemble_learning_with_normal(X,y,split):
     return conf_mat_list
 
 def GENERATE_CONFUSION_MATRIX(X, y, split, target):
-    
+
     conf_mat_list = ensemble_learning_with_normal(X,y,split)
 
     #print(conf_mat_list)
@@ -107,16 +107,17 @@ def GENERATE_CONFUSION_MATRIX(X, y, split, target):
     fn = 0
     tp = 0
     i =  0
-    while i < 4:
+    length = len(conf_mat_list)
+    while i < length:
         tn = tn + conf_mat_list[i][0][0]
         fp = fp + conf_mat_list[i][0][1]
         fn = fn + conf_mat_list[i][1][0]
         tp = tp + conf_mat_list[i][1][1]
         i = i + 1
-    tn = math.ceil(tn / 4)
-    fp = math.floor(fp / 4)
-    fn = math.floor(fn / 4)
-    tp = math.ceil(tp / 4)
+    tn = math.ceil(tn / length)
+    fp = math.floor(fp / length)
+    fn = math.floor(fn / length)
+    tp = math.ceil(tp / length)
     result = [[tn, fp], [fn, tp]]
     #print(result)
     return result
@@ -143,7 +144,7 @@ def permu_result(filename, sum_column, split1, target):
         print("===================finished permutaion====================")
         print()
         print()
-        i+=1 
+        i+=1
     print()
     print()
     print("************************Here is the good result*************************")
@@ -158,8 +159,8 @@ if __name__ == "__main__":
     feature_collections = ['Groups', 'SEX', 'AGE', 'BMI', 'SMOKE', 'DYSPNEA', 'FNSTATUS2', 'HXCOPD', 'ASCITES', 'HXCHF', 'HYPERMED', 'DIALYSIS', 'DISCANCR', 'WNDINF', 'STEROID', 'WTLOSS', 'BLEEDIS', 'TRANSFUS', 'PRSEPIS', 'ASACLAS', 'radial_all_yn', 'distal_all_yn', 'race_final', 'Emerg_yn', 'Diabetes_yn', 'Pre_staging', 'PATHO_staging']
     noisy_features = ['AGE', 'SMOKE', 'FNSTATUS2', 'HXCOPD', 'DIALYSIS', 'TRANSFUS', 'radial_all_yn', 'PRSEPIS']
     candidates_features = ['BMI', 'Groups', 'BLEEDIS', 'WTLOSS', 'HXCHF', 'ASACLAS', 'SEX', 'DYSPNEA', 'ASCITES', 'HYPERMED', 'DISCANCR', 'WNDINF', 'STEROID', 'distal_all_yn', 'race_final', 'Emerg_yn', 'Diabetes_yn', 'Pre_staging', 'PATHO_staging']
-    target = 'Readmission_1'
-    filename = r"/Users/zhipengwang/PycharmProjects/UNMC_Data_Analysis/data/oversampling_Readmission_1.csv"
+    target = 'Reoperation_1'
+    filename = r"/Users/zhipengwang/PycharmProjects/UNMC_Data_Analysis/data/undersampling_Reoperation_1.csv"
     data = pd.read_csv(filename)
     y = data[target]
     X = data.drop([target], axis=1)
@@ -172,67 +173,28 @@ if __name__ == "__main__":
     #print(X.axes)
     split1 = 0.3
     split2 = 0.2
-    #split3 = 0.33
-    i = len(candidates_features)
-    while i > 0:
-        print("number of features " + str(i))
-        sub_features = candidates_features[0:i]
+
+
+    for features in feature_collections:
+        print("Feature name is: " + features)
+
+        sub_features = [features]
         X = data.loc[:, sub_features]
-        r = GENERATE_CONFUSION_MATRIX(X, y, split1, target)
+        try:
+            r = GENERATE_CONFUSION_MATRIX(X, y, split2, target)
+        except:
+            print("cannot get value")
         print(r)
-        i -= 1
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    # print("70/30")
-    # print('Top25 for Chi')
-    # result_7_3_0 = MEAN(filename, sum_column[0], split1, target)
-    # print('Top20 for Chi')
-    # result_7_3_1 = MEAN(filename, sum_column[1], split1, target)
-    # print('Top25 for ANOVA')
-    # result_7_3_2 = MEAN(filename, sum_column[2], split1, target)
-    # print('Top20 for ANOVA')
-    # result_7_3_3 = MEAN(filename, sum_column[3], split1, target)
-    # print('Top25 for Mutual_info')
-    # result_7_3_4 = MEAN(filename, sum_column[4], split1, target)
-    # print('Top20 for Mutual_info')
-    # result_7_3_5 = MEAN(filename, sum_column[5], split1, target)
-    # print()
-    # print()
-    # print('80/20')
-    # print('Top25 for Chi')
-    # result_8_2_0 = MEAN(filename, sum_column[0], split2, target)
-    # print('Top20 for Chi')
-    # result_8_2_1 = MEAN(filename, sum_column[1], split2, target)
-    # print('Top25 for ANOVA')
-    # result_8_2_2 = MEAN(filename, sum_column[2], split2, target)
-    # print('Top20 for ANOVA')
-    # result_8_2_3 = MEAN(filename, sum_column[3], split2, target)
-    # print('Top25 for Mutual_info')
-    # result_8_2_4 = MEAN(filename, sum_column[4], split2, target)
-    # print('Top20 for Mutual_info')
-    # result_8_2_5 = MEAN(filename, sum_column[5], split2, target)
-
-    # first_list = [result_7_3_0, result_7_3_1, result_7_3_2, result_7_3_3, result_7_3_4, result_7_3_5]
-    # second_list = [result_8_2_0, result_8_2_1, result_8_2_2, result_8_2_3, result_8_2_4, result_8_2_5]
-
-    # print()
-    # print(first_list)
-    # print(second_list)
+    #split3 = 0.33
+    # i = len(candidates_features)
+    #
+    # while i > 0:
+    #     print("number of features " + str(i))
+    #     sub_features = candidates_features[0:i]
+    #     X = data.loc[:, sub_features]
+    #     r = GENERATE_CONFUSION_MATRIX(X, y, split1, target)
+    #     print(r)
+    #     i -= 1
