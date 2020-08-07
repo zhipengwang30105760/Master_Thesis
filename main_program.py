@@ -154,6 +154,19 @@ def permu_result(filename, sum_column, split1, target):
         df = pd.DataFrame(final)
         df.to_excel(r"C:\Users\zhipe\Desktop\good_result.xlsx", index = False)
 
+def drop_constant_columns(dataframe, candidate_features):
+    """
+    Drops constant value columns of pandas dataframe.
+    """
+    candidates_features = candidate_features.copy()
+    result = dataframe.copy()
+    for column in dataframe.columns:
+        if len(dataframe[column].unique()) == 1:
+            result = result.drop(column,axis=1)
+            if column in feature_collections:
+                feature_collections.remove(column)
+    return result, candidates_features
+
 
 if __name__ == "__main__":
     feature_collections = ['Groups', 'SEX', 'AGE', 'BMI', 'SMOKE', 'DYSPNEA', 'FNSTATUS2', 'HXCOPD', 'ASCITES', 'HXCHF', 'HYPERMED', 'DIALYSIS', 'DISCANCR', 'WNDINF', 'STEROID', 'WTLOSS', 'BLEEDIS', 'TRANSFUS', 'PRSEPIS', 'ASACLAS', 'radial_all_yn', 'distal_all_yn', 'race_final', 'Emerg_yn', 'Diabetes_yn', 'Pre_staging', 'PATHO_staging']
@@ -162,15 +175,14 @@ if __name__ == "__main__":
     target = 'Reoperation_1'
     filename = r"/Users/zhipengwang/PycharmProjects/UNMC_Data_Analysis/data/undersampling_Reoperation_1.csv"
     data = pd.read_csv(filename)
+    #remove the features with constant values
+    data, candidates_features = drop_constant_columns(data, candidates_features)
     y = data[target]
     X = data.drop([target], axis=1)
-    #data normalization
+    #start data normalization
     scaler = StandardScaler()
     #do normalization for BMI and AGE
     X.iloc[:, 2:4] = scaler.fit_transform(X.iloc[:, 2:4])
-    #choose the selected features
-    #X = data.loc[:,candidates_features]
-    #print(X.axes)
     split1 = 0.3
     split2 = 0.2
 
