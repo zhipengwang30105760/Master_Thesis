@@ -7,7 +7,7 @@ import seaborn as sns
 import statsmodels.api as sm
 
 
-from main_program import GENERATE_CONFUSION_MATRIX
+from classification_using_normal_model import GENERATE_CONFUSION_MATRIX
 
 
 
@@ -46,7 +46,7 @@ def backwardElimination(x, Y, sl, columns):
             for j in range(0, numVars - i):
                 if (regressor_OLS.pvalues[j].astype(float) == maxVar):
                     x = np.delete(x, j, 1)
-                    columns = np.delete(columns, j)
+                    ccolumns = np.delete(columns, j)
 
     regressor_OLS.summary()
     return x, columns
@@ -56,11 +56,11 @@ def backwardElimination(x, Y, sl, columns):
 
 
 if __name__ == "__main__":
-    filename = r"/Users/zhipengwang/PycharmProjects/UNMC_Data_Analysis/data/original_Readmission_1.csv"
-    target="Readmission_1"
+    filename = r"/Users/zhipengwang/PycharmProjects/UNMC_Data_Analysis/data/undersampling_Mortality_1.csv"
+    target="Mortality_1"
     noisy_features = ['AGE', 'SMOKE', 'FNSTATUS2', 'HXCOPD', 'DIALYSIS', 'TRANSFUS', 'radial_all_yn', 'PRSEPIS']
     origin_data = pd.read_csv(filename)
-    data, selected_columns = correlation_heatmap(origin_data, upper_bound= 0.25, lower_bound= -0.2)
+    data, selected_columns = correlation_heatmap(origin_data, upper_bound= 0.34, lower_bound= -0.34)
 
     selected_columns = selected_columns[1:].values
 
