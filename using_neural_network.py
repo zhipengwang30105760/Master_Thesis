@@ -9,6 +9,7 @@ import math
 from sklearn.metrics import classification_report
 from sklearn.model_selection import GridSearchCV
 import tensorflow as tf
+import numpy as np
 
 def drop_constant_columns(dataframe, candidate_features):
     """
@@ -98,6 +99,17 @@ def configure_best_classifier(mlp):
     print()
     print(y_pred)
 
+def using_keras():
+    model = tf.keras.models.Sequential([
+    tf.keras.layers.Dense(16, activation='relu', input_shape=(4,)),
+    tf.keras.layers.Dropout(0.2),
+    tf.keras.layers.Dense(3)
+    ])
+    model.compile(loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+                  optimizer='adam')
+    model.summary()
+
+
 
 if __name__ == "__main__":
     filename = r"/Users/zhipengwang/PycharmProjects/UNMC_Data_Analysis/data/original_Mortality_1.csv"
@@ -115,33 +127,63 @@ if __name__ == "__main__":
     # do normalization for BMI and AGE
     X.iloc[:, 2:4] = scaler.fit_transform(X.iloc[:, 2:4])
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=None)
-    #laod classifier
-    #mlp = generate_classifier()
+    #X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=None)
+    #default mlp classifier
+    #load classifier
+    # Readmission MLPClassifier(hidden_layer_sizes=(50, 50, 50), max_iter=500, random_state=1)
+    # Reoperation MLPClassifier(activation='tanh', hidden_layer_sizes=(50, 100, 50), learning_rate='adaptive', max_iter=500, random_state=1)
+    # Morality MLPClassifier(activation='tanh', hidden_layer_sizes=(50, 50, 50), max_iter=500, random_state=1, solver='sgd')
+
+    mlp = generate_classifier((50, 50, 50), 'tanh', 'sgd', 0.5, 'adaptive')
+
+
 
     #configure_best_classifier(mlp)
+    for feature in feature_collections:
+        sub_features = [feature]
+        X = data.loc[:, sub_features]
 
-    # mlp.fit(X_train, y_train)
-    # y_pred = mlp.predict(X_test)
-    # cm = confusion_matrix(y_pred, y_test)
-    # print(cm)
+        # start data normalization
+        scaler = StandardScaler()
+        # do normalization for BMI and AGE
+        # if feature == 'BMI' or feature == 'AGE':
+        #     X= scaler.fit_transform(X)
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=None)
 
-    parameter_space = {
-        'hidden_layer_sizes': [(50, 50, 50), (50, 100, 50), (100,), (150, 50, 100)],
-        'activation': ['tanh', 'relu'],
-        'solver': ['sgd', 'adam'],
-        'alpha': [0.0001, 0.05],
-        'learning_rate': ['constant', 'adaptive'],
-    }
 
-    classifiers = custom_mlp(parameter_space)
-    print('start')
-    for classifier in classifiers:
-        classifier.fit(X_train, y_train)
-        y_pred = classifier.predict(X_test)
+        mlp.fit(X_train, y_train)
+        y_pred = mlp.predict(X_test)
         cm = confusion_matrix(y_pred, y_test)
-        #if(cm[1][1] > 10):
+        print('Feature name is: ' + feature)
         print(cm)
+
+    #
+    #custom classifier
+    # parameter_space = {
+    #     'hidden_layer_sizes': [(50, 50, 50), (50, 100, 50), (100,), (150, 50, 100)],
+    #     'activation': ['tanh', 'relu'],
+    #     'solver': ['sgd', 'adam'],
+    #     'alpha': [0.0001, 0.05],
+    #     'learning_rate': ['constant', 'adaptive'],
+    # }
+    #
+    # classifiers = custom_mlp(parameter_space)
+    # print('start')
+    # for classifier in classifiers:
+    #     classifier.fit(X_train, y_train)
+    #     y_pred = classifier.predict(X_test)
+    #     cm = confusion_matrix(y_pred, y_test)
+    #     if(cm[1][1] == 0):
+    #         print(classifier)
+    #         print(cm)
+
+
+
+
+
+
+
+
 
 
 

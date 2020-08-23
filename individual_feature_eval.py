@@ -19,7 +19,7 @@ def single_feature_evaluation(original_data, selected_column, target):
 
     mean_class1 = sum_class_1 / num_class1
     mean_class2 = sum_class_2 / num_class2
-    mean_class1_and_class2 = mean_class1 + mean_class2
+    mean_class1_and_class2 = (sum_class_1 + sum_class_2) / (num_class2 + num_class1)
 
     numerator = abs(mean_class1 - mean_class1_and_class2) + abs(mean_class2 - mean_class1_and_class2)
 
@@ -54,6 +54,8 @@ if __name__ == "__main__":
                            'HYPERMED', 'DIALYSIS', 'DISCANCR', 'WNDINF', 'STEROID', 'WTLOSS', 'BLEEDIS', 'TRANSFUS',
                            'PRSEPIS', 'ASACLAS', 'radial_all_yn', 'distal_all_yn', 'race_final', 'Emerg_yn',
                            'Diabetes_yn', 'Pre_staging', 'PATHO_staging']
+
+
     original_data = pd.read_csv(filename)
     dict = individual_feature_evaluation(original_data, feature_collections, target)
     print(dict)
