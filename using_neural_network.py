@@ -108,6 +108,10 @@ def using_keras():
     model.compile(loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
                   optimizer='adam')
     model.summary()
+#p is target, q is predict result
+def cross_entropy(p, q):
+
+    return -sum([p[i] * math.log2(q[i]) for i in range(len(p))])
 
 
 
@@ -127,7 +131,7 @@ if __name__ == "__main__":
     # do normalization for BMI and AGE
     X.iloc[:, 2:4] = scaler.fit_transform(X.iloc[:, 2:4])
 
-    #X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=None)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=None)
     #default mlp classifier
     #load classifier
     # Readmission MLPClassifier(hidden_layer_sizes=(50, 50, 50), max_iter=500, random_state=1)
@@ -135,27 +139,39 @@ if __name__ == "__main__":
     # Morality MLPClassifier(activation='tanh', hidden_layer_sizes=(50, 50, 50), max_iter=500, random_state=1, solver='sgd')
 
     mlp = generate_classifier((50, 50, 50), 'tanh', 'sgd', 0.5, 'adaptive')
+    mlp.fit(X_train, y_train)
+    #using proba function to get perentage of prediction, then can do cross entropy
+    prediction = mlp.predict_proba(X_test)
+
+
+    #get prediction list and parse them into a list
+    first_list = [predict for predict in prediction[:, 0]]
+    second_list = [score for score in y_test]
+
+    entropy = cross_entropy(second_list, first_list)
+    print(entropy)
+
 
 
 
     #configure_best_classifier(mlp)
-    for feature in feature_collections:
-        sub_features = [feature]
-        X = data.loc[:, sub_features]
-
-        # start data normalization
-        scaler = StandardScaler()
-        # do normalization for BMI and AGE
-        # if feature == 'BMI' or feature == 'AGE':
-        #     X= scaler.fit_transform(X)
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=None)
-
-
-        mlp.fit(X_train, y_train)
-        y_pred = mlp.predict(X_test)
-        cm = confusion_matrix(y_pred, y_test)
-        print('Feature name is: ' + feature)
-        print(cm)
+    # for feature in feature_collections:
+    #     sub_features = [feature]
+    #     X = data.loc[:, sub_features]
+    #
+    #     # start data normalization
+    #     scaler = StandardScaler()
+    #     # do normalization for BMI and AGE
+    #     # if feature == 'BMI' or feature == 'AGE':
+    #     #     X= scaler.fit_transform(X)
+    #     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=None)
+    #
+    #
+    #     mlp.fit(X_train, y_train)
+    #     y_pred = mlp.predict(X_test)
+    #     cm = confusion_matrix(y_pred, y_test)
+    #     print('Feature name is: ' + feature)
+    #     print(cm)
 
     #
     #custom classifier
