@@ -118,10 +118,11 @@ def cross_entropy(p, q):
 if __name__ == "__main__":
     filename = r"/Users/zhipengwang/PycharmProjects/UNMC_Data_Analysis/data/original_Mortality_1.csv"
     target="Mortality_1"
-    feature_collections = ['Groups', 'SEX', 'AGE', 'BMI', 'SMOKE', 'DYSPNEA', 'FNSTATUS2', 'HXCOPD', 'ASCITES', 'HXCHF',
-                           'HYPERMED', 'DIALYSIS', 'DISCANCR', 'WNDINF', 'STEROID', 'WTLOSS', 'BLEEDIS', 'TRANSFUS',
-                           'PRSEPIS', 'ASACLAS', 'radial_all_yn', 'distal_all_yn', 'race_final', 'Emerg_yn',
-                           'Diabetes_yn', 'Pre_staging', 'PATHO_staging']
+    # feature_collections = ['Groups', 'SEX', 'AGE', 'BMI', 'SMOKE', 'DYSPNEA', 'FNSTATUS2', 'HXCOPD', 'ASCITES', 'HXCHF',
+    #                        'HYPERMED', 'DIALYSIS', 'DISCANCR', 'WNDINF', 'STEROID', 'WTLOSS', 'BLEEDIS', 'TRANSFUS',
+    #                        'PRSEPIS', 'ASACLAS', 'radial_all_yn', 'distal_all_yn', 'race_final', 'Emerg_yn',
+    #                        'Diabetes_yn', 'Pre_staging', 'PATHO_staging']
+    feature_collections = ['HXCOPD', 'FNSTATUS2', 'AGE', 'BMI','Pre_staging', 'PATHO_staging', 'PRSEPIS', 'TRANSFUS', 'Groups', 'SEX', 'SMOKE', 'radial_all_yn']
     data = pd.read_csv(filename)
     data, candidates_features = drop_constant_columns(data, feature_collections)
     y = data[target]
@@ -131,25 +132,27 @@ if __name__ == "__main__":
     # do normalization for BMI and AGE
     X.iloc[:, 2:4] = scaler.fit_transform(X.iloc[:, 2:4])
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=None)
-    #default mlp classifier
-    #load classifier
-    # Readmission MLPClassifier(hidden_layer_sizes=(50, 50, 50), max_iter=500, random_state=1)
-    # Reoperation MLPClassifier(activation='tanh', hidden_layer_sizes=(50, 100, 50), learning_rate='adaptive', max_iter=500, random_state=1)
-    # Morality MLPClassifier(activation='tanh', hidden_layer_sizes=(50, 50, 50), max_iter=500, random_state=1, solver='sgd')
+    X = X[feature_collections]
 
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=None)
+    # #default mlp classifier
+    # #load classifier
+    # # Readmission MLPClassifier(hidden_layer_sizes=(50, 50, 50), max_iter=500, random_state=1)
+    # # Reoperation MLPClassifier(activation='tanh', hidden_layer_sizes=(50, 100, 50), learning_rate='adaptive', max_iter=500, random_state=1)
+    # # Morality MLPClassifier(activation='tanh', hidden_layer_sizes=(50, 50, 50), max_iter=500, random_state=1, solver='sgd')
+    #
     mlp = generate_classifier((50, 50, 50), 'tanh', 'sgd', 0.5, 'adaptive')
     mlp.fit(X_train, y_train)
     #using proba function to get perentage of prediction, then can do cross entropy
-    prediction = mlp.predict_proba(X_test)
+    # prediction = mlp.predict_proba(X_test)
+    y_pred = mlp.predict(X_test)
+    cm = confusion_matrix(y_pred, y_test)
+    print(cm)
 
-
-    #get prediction list and parse them into a list
-    first_list = [predict for predict in prediction[:, 0]]
-    second_list = [score for score in y_test]
-
-    entropy = cross_entropy(second_list, first_list)
-    print(entropy)
+    # first_list = [predict for predict in prediction[:, 0]]
+    # second_list = [score for score in y_test]
+    # entropy = cross_entropy(second_list, first_list)
+    # print(entropy)
 
 
 
