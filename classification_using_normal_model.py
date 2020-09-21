@@ -171,42 +171,24 @@ def drop_constant_columns(dataframe, candidate_features):
 if __name__ == "__main__":
     feature_collections = ['Groups', 'SEX', 'AGE', 'BMI', 'SMOKE', 'DYSPNEA', 'FNSTATUS2', 'HXCOPD', 'ASCITES', 'HXCHF', 'HYPERMED', 'DIALYSIS', 'DISCANCR', 'WNDINF', 'STEROID', 'WTLOSS', 'BLEEDIS', 'TRANSFUS', 'PRSEPIS', 'ASACLAS', 'radial_all_yn', 'distal_all_yn', 'race_final', 'Emerg_yn', 'Diabetes_yn', 'Pre_staging', 'PATHO_staging']
     noisy_features = ['AGE', 'SMOKE', 'FNSTATUS2', 'HXCOPD', 'DIALYSIS', 'TRANSFUS', 'radial_all_yn', 'PRSEPIS']
-    candidates_features = ['BMI', 'Groups', 'BLEEDIS', 'WTLOSS', 'HXCHF', 'ASACLAS', 'SEX', 'DYSPNEA', 'ASCITES', 'HYPERMED', 'DISCANCR', 'WNDINF', 'STEROID', 'distal_all_yn', 'race_final', 'Emerg_yn', 'Diabetes_yn', 'Pre_staging', 'PATHO_staging']
-    target = 'Reoperation_1'
-    filename = r"/Users/zhipengwang/PycharmProjects/UNMC_Data_Analysis/data/undersampling_Reoperation_1.csv"
+    candidates_features = ['Groups','SEX','SMOKE','radial_all_yn','WNDINF']
+    target = 'Readmission_1'
+    filename = r"/Users/zhipengwang/PycharmProjects/UNMC_Data_Analysis/data/original_Readmission_1.csv"
     data = pd.read_csv(filename)
     #remove the features with constant values
     data, candidates_features = drop_constant_columns(data, candidates_features)
     y = data[target]
-    X = data.drop([target], axis=1)
+    #X = data.drop([target], axis=1)
+    X = data[candidates_features]
     #start data normalization
     scaler = StandardScaler()
     #do normalization for BMI and AGE
     X.iloc[:, 2:4] = scaler.fit_transform(X.iloc[:, 2:4])
-    split1 = 0.3
-    split2 = 0.2
+    split = 0.2
 
-
-    for features in feature_collections:
-        print("Feature name is: " + features)
-
-        sub_features = [features]
-        X = data.loc[:, sub_features]
-        try:
-            r = GENERATE_CONFUSION_MATRIX(X, y, split2, target)
-        except:
-            print("cannot get value")
-        print(r)
+    r = GENERATE_CONFUSION_MATRIX(X, y, split, target)
+    print(r)
 
 
 
-    #split3 = 0.33
-    # i = len(candidates_features)
-    #
-    # while i > 0:
-    #     print("number of features " + str(i))
-    #     sub_features = candidates_features[0:i]
-    #     X = data.loc[:, sub_features]
-    #     r = GENERATE_CONFUSION_MATRIX(X, y, split1, target)
-    #     print(r)
-    #     i -= 1
+

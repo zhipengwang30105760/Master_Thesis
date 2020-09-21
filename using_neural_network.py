@@ -116,13 +116,15 @@ def cross_entropy(p, q):
 
 
 if __name__ == "__main__":
-    filename = r"/Users/zhipengwang/PycharmProjects/UNMC_Data_Analysis/data/original_Mortality_1.csv"
-    target="Mortality_1"
+    filename = r"/Users/zhipengwang/PycharmProjects/UNMC_Data_Analysis/data/original_Reoperation_1.csv"
+    target="Reoperation_1"
     # feature_collections = ['Groups', 'SEX', 'AGE', 'BMI', 'SMOKE', 'DYSPNEA', 'FNSTATUS2', 'HXCOPD', 'ASCITES', 'HXCHF',
     #                        'HYPERMED', 'DIALYSIS', 'DISCANCR', 'WNDINF', 'STEROID', 'WTLOSS', 'BLEEDIS', 'TRANSFUS',
     #                        'PRSEPIS', 'ASACLAS', 'radial_all_yn', 'distal_all_yn', 'race_final', 'Emerg_yn',
     #                        'Diabetes_yn', 'Pre_staging', 'PATHO_staging']
-    feature_collections = ['HXCOPD', 'FNSTATUS2', 'AGE', 'BMI','Pre_staging', 'PATHO_staging', 'PRSEPIS', 'TRANSFUS', 'Groups', 'SEX', 'SMOKE', 'radial_all_yn']
+
+    #feature_collections = ['Groups', 'SEX', 'SMOKE', 'HXCHF', 'DIALYSIS', 'WNDINF', 'STEROID', 'WTLOSS', 'BLEEDIS', 'radial_all_yn', 'distal_all_yn', 'race_final', 'BMI', 'TRANSFUS', 'HXCOPD', 'Pre_staging', 'FNSTATUS2', 'AGE']
+    feature_collections = ['SMOKE','HXCHF','DIALYSIS','WNDINF']
     data = pd.read_csv(filename)
     data, candidates_features = drop_constant_columns(data, feature_collections)
     y = data[target]
@@ -130,7 +132,7 @@ if __name__ == "__main__":
     # start data normalization
     scaler = StandardScaler()
     # do normalization for BMI and AGE
-    X.iloc[:, 2:4] = scaler.fit_transform(X.iloc[:, 2:4])
+    #X.iloc[:, 2:4] = scaler.fit_transform(X.iloc[:, 2:4])
 
     X = X[feature_collections]
 
@@ -144,63 +146,43 @@ if __name__ == "__main__":
     mlp = generate_classifier((50, 50, 50), 'tanh', 'sgd', 0.5, 'adaptive')
     mlp.fit(X_train, y_train)
     #using proba function to get perentage of prediction, then can do cross entropy
-    # prediction = mlp.predict_proba(X_test)
-    y_pred = mlp.predict(X_test)
-    cm = confusion_matrix(y_pred, y_test)
-    print(cm)
+    prediction = mlp.predict_proba(X_test)
 
-    # first_list = [predict for predict in prediction[:, 0]]
-    # second_list = [score for score in y_test]
-    # entropy = cross_entropy(second_list, first_list)
-    # print(entropy)
+    # y_pred = mlp.predict(X_test)
+    # cm = confusion_matrix(y_pred, y_test)
+    # print(cm)
 
-
-
-
-    #configure_best_classifier(mlp)
+    selected_feature_distribution = [predict for predict in prediction[:, 0]]
+    target_distribution = [score for score in y_test]
+    entropy = cross_entropy(target_distribution, selected_feature_distribution)
+    print(entropy)
+    #
+    # independent_feature_ditribution = [predict for predict in prediction[:, 0]]
+    # names = []
+    # values = []
     # for feature in feature_collections:
-    #     sub_features = [feature]
-    #     X = data.loc[:, sub_features]
-    #
-    #     # start data normalization
-    #     scaler = StandardScaler()
-    #     # do normalization for BMI and AGE
-    #     # if feature == 'BMI' or feature == 'AGE':
-    #     #     X= scaler.fit_transform(X)
+    #     copy_feature_collectins = ['Groups', 'SEX', 'SMOKE', 'HXCHF', 'DIALYSIS', 'WNDINF', 'STEROID', 'WTLOSS', 'BLEEDIS', 'radial_all_yn', 'distal_all_yn', 'race_final', 'BMI', 'TRANSFUS', 'HXCOPD', 'Pre_staging', 'FNSTATUS2', 'AGE']
+    #     copy_feature_collectins.remove(feature)
+    #     sub_features = copy_feature_collectins
+    #     X = data.drop([target], axis=1)
+    #     y = data[target]
+    #     X = X.loc[:, sub_features]
+    #     #X = X[sub_features]
     #     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=None)
-    #
-    #
+    #     mlp = generate_classifier((50, 50, 50), 'tanh', 'sgd', 0.5, 'adaptive')
     #     mlp.fit(X_train, y_train)
-    #     y_pred = mlp.predict(X_test)
-    #     cm = confusion_matrix(y_pred, y_test)
-    #     print('Feature name is: ' + feature)
-    #     print(cm)
-
+    #     prediction = mlp.predict_proba(X_test)
+    #     remove_single_feature_distribution = [predict for predict in prediction[:, 0]]
+    #     #print('For ' + feature + ': ')
+    #     names.append(feature)
+    #     entropy = cross_entropy(independent_feature_ditribution, remove_single_feature_distribution)
+    #     values.append(entropy)
+    #     #print(entropy)
     #
-    #custom classifier
-    # parameter_space = {
-    #     'hidden_layer_sizes': [(50, 50, 50), (50, 100, 50), (100,), (150, 50, 100)],
-    #     'activation': ['tanh', 'relu'],
-    #     'solver': ['sgd', 'adam'],
-    #     'alpha': [0.0001, 0.05],
-    #     'learning_rate': ['constant', 'adaptive'],
-    # }
     #
-    # classifiers = custom_mlp(parameter_space)
-    # print('start')
-    # for classifier in classifiers:
-    #     classifier.fit(X_train, y_train)
-    #     y_pred = classifier.predict(X_test)
-    #     cm = confusion_matrix(y_pred, y_test)
-    #     if(cm[1][1] == 0):
-    #         print(classifier)
-    #         print(cm)
-
-
-
-
-
-
+    # final = [names, values]
+    # df = pd.DataFrame(final, columns=feature_collections)
+    # df.to_excel(r"/Users/zhipengwang/Desktop/output_result.xlsx", index=False)
 
 
 
