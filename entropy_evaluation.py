@@ -62,8 +62,9 @@ def kl_divergence(p, q):
     return sum([p[i] * math.log2(p[i] / q[i]) for i in range(len(p))])
 
 
-def individual_confusion_matrix():
-    for feature in rest_features:
+def individual_confusion_matrix(X, non_binary_feature_collections, target):
+    result = []
+    for feature in non_binary_feature_collections:
         tp = 0
         fp = 0
         tn = 0
@@ -77,65 +78,88 @@ def individual_confusion_matrix():
                 fp += 1
             elif X[feature][i] == 0 and X[target][i] == 0:
                 tn += 1
-        print(feature)
+        # print(feature)
         confusion_matrix = [[tn, fp], [fn, tp]]
-        print(confusion_matrix)
+        result.append(confusion_matrix)
+        # print(confusion_matrix)
+    return result
 
-if __name__ == "__main__":
-    filename = r"/Users/zhipengwang/PycharmProjects/UNMC_Data_Analysis/data/original_Reoperation_1.csv"
-    target="Reoperation_1"
-    # feature_collections = ['Groups', 'SEX', 'AGE', 'BMI', 'SMOKE', 'DYSPNEA', 'FNSTATUS2', 'HXCOPD', 'ASCITES', 'HXCHF',
-    #                        'HYPERMED', 'DIALYSIS', 'DISCANCR', 'WNDINF', 'STEROID', 'WTLOSS', 'BLEEDIS', 'TRANSFUS',
-    #                        'PRSEPIS', 'ASACLAS', 'radial_all_yn', 'distal_all_yn', 'race_final', 'Emerg_yn',
-    #                        'Diabetes_yn', 'Pre_staging', 'PATHO_staging']
-    feature_collections = ['Groups','ASACLAS','Pre_staging','PATHO_staging','AGE','BMI','DYSPNEA','FNSTATUS2',
+def prev_feature_set():
+    feature_collections = ['Groups', 'SEX', 'AGE', 'BMI', 'SMOKE', 'DYSPNEA', 'FNSTATUS2', 'HXCOPD', 'ASCITES', 'HXCHF',
+                           'HYPERMED', 'DIALYSIS', 'DISCANCR', 'WNDINF', 'STEROID', 'WTLOSS', 'BLEEDIS', 'TRANSFUS',
+                           'PRSEPIS', 'ASACLAS', 'radial_all_yn', 'distal_all_yn', 'race_final', 'Emerg_yn',
+                           'Diabetes_yn', 'Pre_staging', 'PATHO_staging']
+    non_binary_feature_collections = ['Groups','ASACLAS','Pre_staging','PATHO_staging','AGE','BMI','DYSPNEA','FNSTATUS2',
                            'PRSEPIS']
 
-    rest_features = ['SEX', 'SMOKE', 'HXCOPD', 'ASCITES', 'HXCHF',
+    non_binary_feature_collections = ['SEX', 'SMOKE', 'HXCOPD', 'ASCITES', 'HXCHF',
                            'HYPERMED', 'DIALYSIS', 'DISCANCR', 'WNDINF', 'STEROID', 'WTLOSS', 'BLEEDIS', 'TRANSFUS', 'radial_all_yn', 'distal_all_yn', 'race_final', 'Emerg_yn',
                            'Diabetes_yn']
+if __name__ == "__main__":
+    filename = r"/Users/zhipengwang/PycharmProjects/UNMC_Data_Analysis/data/original_DIED.csv"
+    target="DIED"
+    feature = "CM_DRUG"
 
-    data = pd.read_csv(filename)
-    data, candidates_features = drop_constant_columns(data, feature_collections)
-    y = data[target]
-    X = data.drop(feature_collections, axis=1)
+    binary_feature_collections = ['FEMALE','CM_AIDS','CM_ALCOHOL','CM_ANEMDEF','CM_ARTH','CM_BLDLOSS','CM_CHF','CM_CHRNLUNG','CM_COAG','CM_DEPRESS','CM_DM','CM_DMCX','CM_DRUG','CM_HTN_C',
+                           'CM_HYPOTHY','CM_LIVER','CM_LYMPH','CM_LYTES','CM_METS','CM_NEURO',
+                           'CM_OBESE','CM_PARA','CM_PERIVASC','CM_PSYCH','CM_PULMCIRC','CM_RENLFAIL','CM_TUMOR','CM_ULCER','CM_VALVE','CM_WGHTLOSS']
+    data = pd.read_csv(filename, encoding='ISO-8859-1')
+    X = data
+    # data, candidates_features = drop_constant_columns(data, feature_collections)
+
+
+    #y = data[target]
+    #X = data.drop(feature_collections, axis=1)
 
 
     output1 = []
     output2 = []
 
-    target_positive = 0.05
-    target_negative = 0.95
-    p = []
-    for i in range(len(X)):
-        if X[target][i] == 1:
-            p.append(target_positive)
-        elif X[target][i] == 0:
-            p.append(target_negative)
+    # target_positive = 0.065
+    # target_negative = 0.935
+    # p = []
+    # for i in range(len(X)):
+    #     if X[target][i] == 1:
+    #         p.append(target_positive)
+    #     elif X[target][i] == 0:
+    #         p.append(target_negative)
+    #
+    # count = 0
+    # for i in range(len(X)):
+    #     if X["CM_DRUG"][i] == 1:
+    #         count = count + 1
+    # feature_positive = count / len(X)
+    # feature_negative = 1 - count / len(X)
+    # q= []
+    # for i in range(len(X)):
+    #     if X["CM_DRUG"][i] == 1:
+    #         q.append(feature_positive)
+    #     elif X["CM_DRUG"][i] == 0:
+    #         q.append(feature_negative)
+    #
+    # print(p)
+    # print(q)
 
 
-    for feature in rest_features:
-        count = 0;
-        for i in range(len(X)):
-            if X[feature][i] == 1:
-                count += 1
-        feature_positive = count / len(X)
-        feature_negative = 1- count / len(X)
-        q = []
-        for i in range(len(X)):
-            if X[feature][i] == 1:
-                q.append(feature_positive)
-            elif X[feature][i] == 0:
-                q.append(feature_negative)
-
-
-        result1 = cross_entropy(p,q)
-        result2 = kl_divergence(p, q)
-        output1.append(result1)
-        output2.append(result2)
-
-
-
+    # for feature in binary_feature_collections:
+    #     count = 0;
+    #     for i in range(len(X)):
+    #         if X[feature][i] == 1:
+    #             count += 1
+    #     feature_positive = count / len(X)
+    #     feature_negative = 1- count / len(X)
+    #     q = []
+    #     for i in range(len(X)):
+    #         if X[feature][i] == 1:
+    #             q.append(feature_positive)
+    #         elif X[feature][i] == 0:
+    #             q.append(feature_negative)
+    #
+    #
+    #     result1 = cross_entropy(p,q)
+    #     result2 = kl_divergence(p, q)
+    #     output1.append(result1)
+    #     output2.append(result2)
 
 
     # do normalization for BMI and AGE
@@ -168,10 +192,11 @@ if __name__ == "__main__":
     # entropy = cross_entropy(target_distribution, selected_feature_distribution)
     # print(entropy)
 
-    # final = [output1, output2]
-    # df = pd.DataFrame(final, columns=feature_collections)
-    # df.to_excel(r"/Users/zhipengwang/Desktop/output_result.xlsx", index=False)
 
+    # final = [output1, output2]
+    #
+    # df = pd.DataFrame(final, columns=non_binary_feature_collections)
+    # df.to_excel(r"/Users/zhipengwang/Desktop/output_result.xlsx", index=False)
 
 
 
