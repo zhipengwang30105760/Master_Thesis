@@ -91,30 +91,6 @@ def PCA(original_data, feature, target):
     denominator = math.sqrt(deno_1 * deno_2)
     return numerator / denominator
 
-def PCA_verfi(sample, test):
-    mean_x = 0
-    mean_y = 0
-    numerator = 0
-    denominator = 0
-    deno_1 = 0
-    deno_2 = 0
-
-    for i in range(len(sample)):
-        mean_x += sample[i]
-        mean_y += test[i]
-    mean_x /= len(sample)
-    mean_y /= len(sample)
-
-    for i in range(len(sample)):
-        curr = (sample[i] - mean_x) * (test[i] - mean_y)
-        numerator += curr
-        deno_1 += pow((sample[i] - mean_x), 2)
-        deno_2 += pow((test[i] - mean_y), 2)
-
-
-    denominator = math.sqrt(deno_1 * deno_2)
-    return numerator / denominator
-
 
 def pearson_corrleation_analysis(original_data, feature_collections, target):
     dict = {}
@@ -126,24 +102,20 @@ def pearson_corrleation_analysis(original_data, feature_collections, target):
     return dict
 
 if __name__ == "__main__":
-    filename = r"/Users/zhipengwang/PycharmProjects/UNMC_Data_Analysis/data/original_DIED.csv"
+    filename = r"/Users/zhipengwang/PycharmProjects/UNMC_Data_Analysis/data/real_DIED.csv"
     target = "DIED"
     # feature_collections = ['Groups', 'SEX', 'AGE', 'BMI', 'SMOKE', 'DYSPNEA', 'FNSTATUS2', 'HXCOPD', 'ASCITES', 'HXCHF',
     #                        'HYPERMED', 'DIALYSIS', 'DISCANCR', 'WNDINF', 'STEROID', 'WTLOSS', 'BLEEDIS', 'TRANSFUS',
     #                        'PRSEPIS', 'ASACLAS', 'radial_all_yn', 'distal_all_yn', 'race_final', 'Emerg_yn',
     #                        'Diabetes_yn', 'Pre_staging', 'PATHO_staging']
-    feature_collections = ['FEMALE','CM_AIDS','CM_ALCOHOL','CM_ANEMDEF','CM_ARTH','CM_BLDLOSS','CM_CHF','CM_CHRNLUNG','CM_COAG','CM_DEPRESS','CM_DM','CM_DMCX','CM_DRUG','CM_HTN_C',
-                           'CM_HYPOTHY','CM_LIVER','CM_LYMPH','CM_LYTES','CM_METS','CM_NEURO',
-                           'CM_OBESE','CM_PARA','CM_PERIVASC','CM_PSYCH','CM_PULMCIRC','CM_RENLFAIL','CM_TUMOR','CM_ULCER','CM_VALVE','CM_WGHTLOSS']
+    feature_collections = ['CM_AIDS','CM_ALCOHOL','CM_ANEMDEF','CM_ARTH','CM_BLDLOSS','CM_CHF','CM_CHRNLUNG','CM_COAG','CM_DEPRESS','CM_DM'
+        ,'CM_DMCX','CM_DRUG','CM_HTN_C','CM_HYPOTHY','CM_LIVER','CM_LYMPH','CM_LYTES','CM_METS','CM_NEURO','CM_OBESE','CM_PARA','CM_PERIVASC','CM_PSYCH'
+        ,'CM_PULMCIRC','CM_RENLFAIL','CM_TUMOR','CM_ULCER','CM_VALVE','CM_WGHTLOSS']
 
     original_data = pd.read_csv(filename)
-    sample = [1, 1, 0, 0]
-    test = [1, 1, 1, 0]
-    score = PCA_verfi(sample, test)
-    print(score)
-    # dict = pearson_corrleation_analysis(original_data, feature_collections, target)
-    # print(dict)
+    dict = projection_on_one_dimension(original_data, feature_collections, target)
+    print(dict)
     # # final = [m1k, m2k, mk, n1, n2, x1k, x2k, qk]
-    # final = [score_list]
-    # df = pd.DataFrame(final, columns = feature_collections)
-    # df.to_excel(r"/Users/zhipengwang/Desktop/output_result.xlsx", index = False)
+    final = [dict]
+    df = pd.DataFrame(final, columns = feature_collections)
+    df.to_excel(r"/Users/zhipengwang/Desktop/output_result.xlsx", index = False)

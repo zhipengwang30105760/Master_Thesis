@@ -4,30 +4,39 @@ import math
 
 def tpr_times_tnr(matrix):
     tn = matrix[0][0]
-    fp = matrix[0][1]
-    fn = matrix[1][0]
+    fn = matrix[0][1]
+    fp = matrix[1][0]
     tp = matrix[1][1]
 
-    score = (tp / (tp + fn)) * (tn / (tn + fp))
+    try:
+        score = (tp / (tp + fn)) * (tn / (tn + fp))
+    except:
+        score = 1
     return score
 
 def return_tpr_tnr(matrix):
     tn = matrix[0][0]
-    fp = matrix[0][1]
-    fn = matrix[1][0]
+    fp = matrix[1][0]
+    fn = matrix[0][1]
     tp = matrix[1][1]
 
-    tpr = tp / (tp + fn)
-    tnr = tn / (tn + fp)
+    if tp + fn == 0:
+        tpr = 1
+    else:
+        tpr = tp / (tp + fn)
+    if tn + fp == 0:
+        tnr = 1
+    else:
+        tnr = tn / (tn + fp)
 
     return tpr, tnr
 
 
 if __name__ == "__main__":
-    binary_feature_collections = ['FEMALE','CM_AIDS','CM_ALCOHOL','CM_ANEMDEF','CM_ARTH','CM_BLDLOSS','CM_CHF','CM_CHRNLUNG','CM_COAG','CM_DEPRESS','CM_DM','CM_DMCX','CM_DRUG','CM_HTN_C',
-                           'CM_HYPOTHY','CM_LIVER','CM_LYMPH','CM_LYTES','CM_METS','CM_NEURO',
-                           'CM_OBESE','CM_PARA','CM_PERIVASC','CM_PSYCH','CM_PULMCIRC','CM_RENLFAIL','CM_TUMOR','CM_ULCER','CM_VALVE','CM_WGHTLOSS']
-    confusion_matrix_list = [[[488, 447], [29, 36]],	[[933, 2], [65, 0]],	[[892, 43], [63, 2]]	,[[603, 332], [44, 21]]	,[[913, 22], [64, 1]]	,[[876, 59], [63, 2]]	,[[823, 112], [49, 16]]	,[[735, 200], [48, 17]]	,[[877, 58], [46, 19]],	[[863, 72], [62, 3]]	,[[734, 201], [52, 13]]	,[[905, 30], [64, 1]],	[[927, 8], [65, 0]]	,[[366, 569], [32, 33]],	[[847, 88], [59, 6]],	[[907, 28], [61, 4]]	,[[924, 11], [64, 1]],	[[542, 393], [20, 45]],	[[589, 346], [37, 28]],	[[885, 50], [60, 5]]	,[[832, 103], [58, 7]]	,[[920, 15], [60, 5]]	,[[876, 59], [60, 5]]	,[[906, 29], [62, 3]]	,[[882, 53], [58, 7]],	[[861, 74], [52, 13]],	[[859, 76], [61, 4]],	[[935, 0], [65, 0]]	,[[879, 56], [59, 6]],	[[747, 188], [38, 27]]]
+    binary_feature_collections = ['CM_AIDS','CM_ALCOHOL','CM_ANEMDEF','CM_ARTH','CM_BLDLOSS','CM_CHF','CM_CHRNLUNG','CM_COAG','CM_DEPRESS','CM_DM'
+        ,'CM_DMCX','CM_DRUG','CM_HTN_C','CM_HYPOTHY','CM_LIVER','CM_LYMPH','CM_LYTES','CM_METS','CM_NEURO','CM_OBESE','CM_PARA','CM_PERIVASC','CM_PSYCH'
+        ,'CM_PULMCIRC','CM_RENLFAIL','CM_TUMOR','CM_ULCER','CM_VALVE','CM_WGHTLOSS']
+    confusion_matrix_list = [[[67944, 55], [2439, 2]], [[66302, 1697], [2368, 73]], [[47168, 20831], [1735, 706]], [[66727, 1272], [2403, 38]], [[63255, 4744], [2296, 145]], [[62122, 5877], [1780, 661]], [[56495, 11504], [1881, 560]], [[65758, 2241], [1967, 474]], [[63031, 4968], [2309, 132]], [[53409, 14590], [1997, 444]], [[66040, 1959], [2355, 86]], [[67467, 532], [2420, 21]], [[26049, 41950], [1143, 1298]], [[60451, 7548], [2205, 236]], [[66386, 1613], [2328, 113]], [[67562, 437], [2413, 28]], [[48437, 19562], [894, 1547]], [[44103, 23896], [1467, 974]], [[64725, 3274], [2229, 212]], [[59835, 8164], [2255, 186]], [[67127, 872], [2353, 88]], [[64369, 3630], [2093, 348]], [[66278, 1721], [2359, 82]], [[66031, 1968], [2225, 216]], [[63011, 4988], [1974, 467]], [[63131, 4868], [2092, 349]], [[67967, 32], [2441, 0]], [[64430, 3569], [2248, 193]], [[59694, 8305], [1647, 794]]]
 
     positive = []
     negative = []

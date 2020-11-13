@@ -89,32 +89,43 @@ def prev_feature_set():
                            'HYPERMED', 'DIALYSIS', 'DISCANCR', 'WNDINF', 'STEROID', 'WTLOSS', 'BLEEDIS', 'TRANSFUS',
                            'PRSEPIS', 'ASACLAS', 'radial_all_yn', 'distal_all_yn', 'race_final', 'Emerg_yn',
                            'Diabetes_yn', 'Pre_staging', 'PATHO_staging']
+    #reoperation, readmission, mortality
     non_binary_feature_collections = ['Groups','ASACLAS','Pre_staging','PATHO_staging','AGE','BMI','DYSPNEA','FNSTATUS2',
                            'PRSEPIS']
 
     non_binary_feature_collections = ['SEX', 'SMOKE', 'HXCOPD', 'ASCITES', 'HXCHF',
                            'HYPERMED', 'DIALYSIS', 'DISCANCR', 'WNDINF', 'STEROID', 'WTLOSS', 'BLEEDIS', 'TRANSFUS', 'radial_all_yn', 'distal_all_yn', 'race_final', 'Emerg_yn',
                            'Diabetes_yn']
+    #approach died
+    binary_feature_collections = ['FEMALE', 'CM_AIDS', 'CM_ALCOHOL', 'CM_ANEMDEF', 'CM_ARTH', 'CM_BLDLOSS', 'CM_CHF',
+                                  'CM_CHRNLUNG', 'CM_COAG', 'CM_DEPRESS', 'CM_DM', 'CM_DMCX', 'CM_DRUG', 'CM_HTN_C',
+                                  'CM_HYPOTHY', 'CM_LIVER', 'CM_LYMPH', 'CM_LYTES', 'CM_METS', 'CM_NEURO',
+                                  'CM_OBESE', 'CM_PARA', 'CM_PERIVASC', 'CM_PSYCH', 'CM_PULMCIRC', 'CM_RENLFAIL',
+                                  'CM_TUMOR', 'CM_ULCER', 'CM_VALVE', 'CM_WGHTLOSS']
 if __name__ == "__main__":
-    filename = r"/Users/zhipengwang/PycharmProjects/UNMC_Data_Analysis/data/original_DIED.csv"
+    filename = r"/Users/zhipengwang/PycharmProjects/UNMC_Data_Analysis/data/real_DIED.csv"
     target="DIED"
-    feature = "CM_DRUG"
 
-    binary_feature_collections = ['FEMALE','CM_AIDS','CM_ALCOHOL','CM_ANEMDEF','CM_ARTH','CM_BLDLOSS','CM_CHF','CM_CHRNLUNG','CM_COAG','CM_DEPRESS','CM_DM','CM_DMCX','CM_DRUG','CM_HTN_C',
-                           'CM_HYPOTHY','CM_LIVER','CM_LYMPH','CM_LYTES','CM_METS','CM_NEURO',
-                           'CM_OBESE','CM_PARA','CM_PERIVASC','CM_PSYCH','CM_PULMCIRC','CM_RENLFAIL','CM_TUMOR','CM_ULCER','CM_VALVE','CM_WGHTLOSS']
+    binary_feature_collections = ['CM_AIDS','CM_ALCOHOL','CM_ANEMDEF','CM_ARTH','CM_BLDLOSS','CM_CHF','CM_CHRNLUNG','CM_COAG','CM_DEPRESS','CM_DM'
+        ,'CM_DMCX','CM_DRUG','CM_HTN_C','CM_HYPOTHY','CM_LIVER','CM_LYMPH','CM_LYTES','CM_METS','CM_NEURO','CM_OBESE','CM_PARA','CM_PERIVASC','CM_PSYCH'
+        ,'CM_PULMCIRC','CM_RENLFAIL','CM_TUMOR','CM_ULCER','CM_VALVE','CM_WGHTLOSS']
+
     data = pd.read_csv(filename, encoding='ISO-8859-1')
     X = data
     # data, candidates_features = drop_constant_columns(data, feature_collections)
+    print('hello')
+    result = individual_confusion_matrix(X, binary_feature_collections, target)
+    print(result)
+
 
 
     #y = data[target]
     #X = data.drop(feature_collections, axis=1)
 
 
-    output1 = []
-    output2 = []
-
+    # output1 = []
+    # output2 = []
+    #
     # target_positive = 0.065
     # target_negative = 0.935
     # p = []
@@ -160,42 +171,13 @@ if __name__ == "__main__":
     #     result2 = kl_divergence(p, q)
     #     output1.append(result1)
     #     output2.append(result2)
-
-
-    # do normalization for BMI and AGE
-    #scaler = StandardScaler()
-    #X.iloc[:, 2:4] = scaler.fit_transform(X.iloc[:, 2:4])
-
-
-    #X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=None)
-
-
-    # clf = svm.SVC(kernel='linear', C=1, probability=True)
-    # clf = RandomForestClassifier(n_estimators=100)
-    # clf.fit(X_train, y_train)
-
-
-    #using proba function to get perentage of prediction, then can do cross entropy
-    #prediction = mlp.predict_proba(X_test)
-    # clf = AdaBoostClassifier(n_estimators=100, random_state=0)
-    # clf.fit(X, y)
-    # clf = svm.SVC(kernel='linear', C=1)
-    # clf.fit(X, y)
-
-    # y_pred = clf.predict(X_test)
-    # cm = confusion_matrix(y_pred, y_test)
-    # print(cm)
     #
-    # prediction = clf.predict_proba(X_test)
-    # selected_feature_distribution = [predict for predict in prediction[:, 0]]
-    # target_distribution = [score for score in y_test]
-    # entropy = cross_entropy(target_distribution, selected_feature_distribution)
-    # print(entropy)
-
-
+    #
+    #
+    #
     # final = [output1, output2]
     #
-    # df = pd.DataFrame(final, columns=non_binary_feature_collections)
+    # df = pd.DataFrame(result, columns=binary_feature_collections)
     # df.to_excel(r"/Users/zhipengwang/Desktop/output_result.xlsx", index=False)
 
 
