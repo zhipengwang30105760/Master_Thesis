@@ -20,6 +20,7 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.feature_selection import chi2, f_regression
 from sklearn.feature_selection import f_classif, mutual_info_classif, SelectPercentile, VarianceThreshold
 from sklearn.model_selection import train_test_split
+import TPR_and_TNR
 
 def covertToList(npArray):
     alist = []
@@ -29,6 +30,7 @@ def covertToList(npArray):
         alist.append(sublist)
     return alist
 def US(X, Y):
+    print('yes')
     test = SelectKBest(score_func=f_classif, k=4)
     fit = test.fit(X, Y.ravel())
     # summarize scores
@@ -43,7 +45,7 @@ def US(X, Y):
 def RFM(X,Y):
     model = LogisticRegression(solver='lbfgs')
     #fetch the most significant three features
-    rfe = RFE(model, 3)         
+    rfe = RFE(model, 9)
     fit = rfe.fit(X, Y)
     # print("Num Features: %d" % fit.n_features_)
     # print("Selected Features: %s" % fit.support_)
@@ -72,37 +74,6 @@ def FI(X,Y):
     result.append(revise)
     return revise
 
-def chi_Square(X, Y):
-    # for col in df.columns:
-    #     le = LabelEncoder()
-    #     df[col] = le.fit_transform(df[col])
-    chi2_result, pval = chi2(X, Y)
-    #print(chi2_result)
-    result = [['Chi_Sqaure']]
-    revise = covertToList(chi2_result)
-    #revise = word_tokenize(fit.scores_)
-    result.append(revise)
-    return revise
-
-def ANOVA(X, Y):
-    chi2_result, pval = f_classif(X, Y)
-    np.round(chi2_result)
-    #print(chi2_result)
-    result = [['ANOVA']]
-    revise = covertToList(chi2_result)
-    #revise = word_tokenize(fit.scores_)
-    result.append(revise)
-    return revise
-
-def mutual_information(X,Y):
-    mutual = mutual_info_classif(X, Y)
-    #print(result)
-    result = [['Mutual_Information']]
-    revise = covertToList(mutual)
-    #revise = word_tokenize(fit.scores_)
-    result.append(revise)
-    return revise
-
 def constant_Remove(X,y):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=101)
     feature_selector = VarianceThreshold(threshold = 0)
@@ -117,18 +88,17 @@ def lasso(X,Y):
     return result
 
 #format the output function
-def get_list_func(listName, reverse, Number):
-    columns = ['Groups', 'SEX', 'BMI', 'DYSPNEA', 'ASCITES', 'HXCHF', 'HYPERMED',
-       'DISCANCR', 'WNDINF', 'STEROID', 'WTLOSS', 'BLEEDIS', 'ASACLAS',
-       'distal_all_yn', 'race_final', 'Emerg_yn', 'Diabetes_yn', 'Pre_staging',
-       'PATHO_staging']
+def get_list_func(listName, reverse):
+    columns = ['CM_AIDS','CM_ALCOHOL','CM_ANEMDEF','CM_ARTH','CM_BLDLOSS','CM_CHF','CM_CHRNLUNG','CM_COAG','CM_DEPRESS','CM_DM'
+        ,'CM_DMCX','CM_DRUG','CM_HTN_C','CM_HYPOTHY','CM_LIVER','CM_LYMPH','CM_LYTES','CM_METS','CM_NEURO','CM_OBESE','CM_PARA','CM_PERIVASC','CM_PSYCH'
+        ,'CM_PULMCIRC','CM_RENLFAIL','CM_TUMOR','CM_ULCER','CM_VALVE','CM_WGHTLOSS','CM_RENLFAIL','CM_TUMOR']
     refer = {}
     for key, value in zip(columns, listName):
         add_value = value[0]
         refer[key] = add_value
     sort_orders = sorted(refer.items(), key=lambda x: x[1], reverse=reverse)
     result = []
-    for i in sort_orders[0:Number]:
+    for i in sort_orders[0:len(columns)]:
         result.append(i[0])
     return result
 
@@ -141,73 +111,43 @@ def imp_reliefF(X, Y):
 #sort all the features based on the ranking
 def output_list(list_summary):
     for i in list_summary:
-        output_sorted_result = get_list_func(i, True, 27)
+        output_sorted_result = get_list_func(i, True)
         print(output_sorted_result)
 
 def write_output(output_content):
     df = pd.DataFrame(output_content,
-                      columns=['Groups', 'SEX', 'AGE', 'BMI', 'SMOKE', 'DYSPNEA', 'FNSTATUS2', 'HXCOPD', 'ASCITES',
-                               'HXCHF', 'HYPERMED', 'DIALYSIS', 'DISCANCR', 'WNDINF', 'STEROID', 'WTLOSS', 'BLEEDIS',
-                               'TRANSFUS', 'PRSEPIS', 'ASACLAS', 'radial_all_yn', 'distal_all_yn', 'race_final',
-                               'Emerg_yn', 'Diabetes_yn', 'Pre_staging', 'PATHO_staging'])
+                      columns=['CM_AIDS','CM_ALCOHOL','CM_ANEMDEF','CM_ARTH','CM_BLDLOSS','CM_CHF','CM_CHRNLUNG','CM_COAG','CM_DEPRESS','CM_DM'
+        ,'CM_DMCX','CM_DRUG','CM_HTN_C','CM_HYPOTHY','CM_LIVER','CM_LYMPH','CM_LYTES','CM_METS','CM_NEURO','CM_OBESE','CM_PARA','CM_PERIVASC','CM_PSYCH'
+        ,'CM_PULMCIRC','CM_RENLFAIL','CM_TUMOR','CM_ULCER','CM_VALVE','CM_WGHTLOSS','CM_RENLFAIL','CM_TUMOR'])
     df.to_excel(r"/Users/zhipengwang/PycharmProjects/UNMC_Data_Analysis/data/temporary_output.xlsx", index=False)
 
 if __name__ == "__main__":    
     # load data
-    filename = r"/Users/zhipengwang/PycharmProjects/UNMC_Data_Analysis/data/oversampling_Readmission_1.csv"
-    feature_collections = ['Groups', 'SEX', 'AGE', 'BMI', 'SMOKE', 'DYSPNEA', 'FNSTATUS2', 'HXCOPD', 'ASCITES', 'HXCHF', 'HYPERMED', 'DIALYSIS', 'DISCANCR', 'WNDINF', 'STEROID', 'WTLOSS', 'BLEEDIS', 'TRANSFUS', 'PRSEPIS', 'ASACLAS', 'radial_all_yn', 'distal_all_yn', 'race_final', 'Emerg_yn', 'Diabetes_yn', 'Pre_staging', 'PATHO_staging']
-    noisy_features =['AGE', 'SMOKE', 'FNSTATUS2', 'HXCOPD', 'DIALYSIS', 'TRANSFUS', 'radial_all_yn', 'PRSEPIS']
-    candidates_features = [x for x in feature_collections if x not in noisy_features]
+    filename = r"/Users/zhipengwang/PycharmProjects/UNMC_Data_Analysis/data/real_DIED.csv"
+    feature_collections = ['CM_AIDS','CM_ALCOHOL','CM_ANEMDEF','CM_ARTH','CM_BLDLOSS','CM_CHF','CM_CHRNLUNG','CM_COAG','CM_DEPRESS','CM_DM'
+        ,'CM_DMCX','CM_DRUG','CM_HTN_C','CM_HYPOTHY','CM_LIVER','CM_LYMPH','CM_LYTES','CM_METS','CM_NEURO','CM_OBESE','CM_PARA','CM_PERIVASC','CM_PSYCH'
+        ,'CM_PULMCIRC','CM_RENLFAIL','CM_TUMOR','CM_ULCER','CM_VALVE','CM_WGHTLOSS','CM_RENLFAIL','CM_TUMOR']
+    # candidates_features = [x for x in feature_collections if x not in noisy_features]
 
     dataframe = read_csv(filename)
-    target = 'Readmission_1'
+    target = 'DIED'
     Y_dataframe = dataframe[target]
     X_dataframe = dataframe.drop([target], axis=1)
     # data normalization
-    scaler = StandardScaler()
-    X_dataframe.iloc[:, 2:4] = scaler.fit_transform(X_dataframe.iloc[:, 2:4])
-    X_dataframe = dataframe.loc[:, candidates_features]
+    # scaler = StandardScaler()
+    # X_dataframe.iloc[:, 2:4] = scaler.fit_transform(X_dataframe.iloc[:, 2:4])
+    # X_dataframe = dataframe.loc[:, candidates_features]
 
     X = X_dataframe.values
     Y = Y_dataframe.values
 
-
-    #print(feature_collections)
-    # lalist = lasso(X,Y)
-    # for i in range(len(lalist)):
-    #     if lalist[i] == False:
-    #         print('index is ' + str(i))
-    #         print('feature name is ' + feature_collections[i])
-    #         print(lalist[i])
-
-    mutuallist = mutual_information(X, Y)
-    sorted_result = get_list_func(mutuallist, True, 19)
-    print(sorted_result)
-    
-    # fisherlist = fisher_score(X,Y)
-    # relieflist = imp_reliefF(X, Y)
-    # filist = FI(X,Y)
-    #
-    # ANOVAlist = ANOVA(X,Y)
-    # mutuallist = mutual_information(X,Y)
-    # list_collector = [fisherlist, relieflist, filist, ANOVAlist, mutuallist]
-    # for l in list_collector:
-    #     print(l)
-    # output_list(list_collector)
-
-
-
-    #result = [fisherlist, relieflist]
-    #print(list(fisherlist))
-    #print(fisherlist)
-    # uslist = US(X,Y)
+    #uslist = US(X,Y)
     # PRINTLIST(fisherlist, relieflist)
-    # #print(uslist)
-    # #print(get_list_func(uslist, True, 25))
-    #rfmlist = RFM(X,Y)
-    # #print(rfmlist)
-    #filist = FI(X,Y)
-    # PRINTLIST(uslist, rfmlist, filist)
-    #print(filist)
-    #result = [uslist, rfmlist, filist]
- 
+    #print(uslist)
+    #print(get_list_func(uslist, True))
+    # rfmlist = RFM(X,Y)
+    # print(get_list_func(rfmlist, False))
+    # filist = FI(X,Y)
+    # # PRINTLIST(uslist, rfmlist, filist)
+    # print(filist)
+    lasso(X, Y)

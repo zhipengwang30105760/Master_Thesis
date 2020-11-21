@@ -18,7 +18,7 @@ def correlation_heatmap(train, upper_bound, lower_bound, feature_collections):
     fig, ax = plt.subplots(figsize=(20, 20))
     sns.heatmap(correlations, vmax=1.0, center=0, fmt='.2f',
                 square=True, linewidths=0.1, annot=True, cbar_kws={"shrink": 0.7})
-    #plt.show();
+    plt.show();
     columns = np.full((correlations.shape[0],), True, dtype=bool)
     for i in range(correlations.shape[0]):
         for j in range(i+1, correlations.shape[0]):
@@ -66,49 +66,54 @@ def getQk(name):
 
 
 if __name__ == "__main__":
-    # filename = r"/Users/zhipengwang/PycharmProjects/UNMC_Data_Analysis/data/original_Readmission_1.csv"
-    # target="Readmission_1"
-    # origin_data = pd.read_csv(filename)
-    feature_collections = ['Groups', 'SEX', 'AGE', 'BMI', 'SMOKE', 'DYSPNEA', 'FNSTATUS2', 'HXCOPD', 'ASCITES', 'HXCHF',
-                           'HYPERMED', 'DIALYSIS', 'DISCANCR', 'WNDINF', 'STEROID', 'WTLOSS', 'BLEEDIS', 'TRANSFUS',
-                           'PRSEPIS', 'ASACLAS', 'radial_all_yn', 'distal_all_yn', 'race_final', 'Emerg_yn',
-                           'Diabetes_yn', 'Pre_staging', 'PATHO_staging']
+    filename = r"/Users/zhipengwang/PycharmProjects/UNMC_Data_Analysis/data/real_DIED.csv"
+    target="DIED"
+    origin_data = pd.read_csv(filename)
+    # feature_collections = ['Groups', 'SEX', 'AGE', 'BMI', 'SMOKE', 'DYSPNEA', 'FNSTATUS2', 'HXCOPD', 'ASCITES', 'HXCHF',
+    #                        'HYPERMED', 'DIALYSIS', 'DISCANCR', 'WNDINF', 'STEROID', 'WTLOSS', 'BLEEDIS', 'TRANSFUS',
+    #                        'PRSEPIS', 'ASACLAS', 'radial_all_yn', 'distal_all_yn', 'race_final', 'Emerg_yn',
+    #                        'Diabetes_yn', 'Pre_staging', 'PATHO_staging']
+    feature_collections = ['CM_AIDS', 'CM_ALCOHOL', 'CM_ANEMDEF', 'CM_ARTH', 'CM_BLDLOSS', 'CM_CHF', 'CM_CHRNLUNG',
+                           'CM_COAG', 'CM_DEPRESS', 'CM_DM'
+        , 'CM_DMCX', 'CM_DRUG', 'CM_HTN_C', 'CM_HYPOTHY', 'CM_LIVER', 'CM_LYMPH', 'CM_LYTES', 'CM_METS', 'CM_NEURO',
+                           'CM_OBESE', 'CM_PARA', 'CM_PERIVASC', 'CM_PSYCH'
+        , 'CM_PULMCIRC', 'CM_RENLFAIL', 'CM_TUMOR', 'CM_ULCER', 'CM_VALVE', 'CM_WGHTLOSS', 'CM_RENLFAIL', 'CM_TUMOR']
 
 
-    # data, independent_features, dependent_features = correlation_heatmap(origin_data, upper_bound= 0.2, lower_bound= -0.2, feature_collections = feature_collections)
-    # dependent_features = dependent_features[1:] #first list is empty set we should remove it
+    data, independent_features, dependent_features = correlation_heatmap(origin_data, upper_bound= 0.2, lower_bound= -0.2, feature_collections = feature_collections)
+    dependent_features = dependent_features[1:] #first list is empty set we should remove it
     # print(dependent_features)
-    #print(independent_features)
+    # print(independent_features)
 
-    Qk = getQk('Reoperation')
-
-    candidate_list = [['AGE', 'HYPERMED'],
-                      ['AGE', 'ASACLAS'],
-                      ['BMI', 'HYPERMED'],
-                      ['BMI', 'Diabetes_yn'],
-                      ['DYSPNEA', 'HXCOPD'],
-                      ['FNSTATUS2', 'ASCITES'],
-                      ['HYPERMED', 'ASACLAS'],
-                      ['HYPERMED', 'Diabetes_yn'],
-                      ['DISCANCR', 'Pre_staging'],
-                      ['DISCANCR', 'PATHO_staging'],
-                      ['TRANSFUS', 'PRSEPIS'],
-                      ['TRANSFUS', 'Emerg_yn'],
-                      ['PRSEPIS', 'Emerg_yn']]
-
-    for candidates in candidate_list:
-        q1 = Qk[feature_collections.index(candidates[0])]
-        q2 = Qk[feature_collections.index(candidates[1])]
-        if q1 > q2:
-            candidates.remove(candidates[0])
-        else:
-            candidates.remove(candidates[1])
-
-    result = set()
-    for candidates in candidate_list:
-        result.add(candidates[0])
-
-    print(result)
+    # Qk = getQk('Reoperation')
+    #
+    # candidate_list = [['AGE', 'HYPERMED'],
+    #                   ['AGE', 'ASACLAS'],
+    #                   ['BMI', 'HYPERMED'],
+    #                   ['BMI', 'Diabetes_yn'],
+    #                   ['DYSPNEA', 'HXCOPD'],
+    #                   ['FNSTATUS2', 'ASCITES'],
+    #                   ['HYPERMED', 'ASACLAS'],
+    #                   ['HYPERMED', 'Diabetes_yn'],
+    #                   ['DISCANCR', 'Pre_staging'],
+    #                   ['DISCANCR', 'PATHO_staging'],
+    #                   ['TRANSFUS', 'PRSEPIS'],
+    #                   ['TRANSFUS', 'Emerg_yn'],
+    #                   ['PRSEPIS', 'Emerg_yn']]
+    #
+    # for candidates in candidate_list:
+    #     q1 = Qk[feature_collections.index(candidates[0])]
+    #     q2 = Qk[feature_collections.index(candidates[1])]
+    #     if q1 > q2:
+    #         candidates.remove(candidates[0])
+    #     else:
+    #         candidates.remove(candidates[1])
+    #
+    # result = set()
+    # for candidates in candidate_list:
+    #     result.add(candidates[0])
+    #
+    # print(result)
 
     #independent features ['Groups', 'SEX', 'SMOKE', 'HXCHF', 'DIALYSIS', 'WNDINF', 'STEROID', 'WTLOSS', 'BLEEDIS', 'radial_all_yn', 'distal_all_yn', 'race_final']
 
