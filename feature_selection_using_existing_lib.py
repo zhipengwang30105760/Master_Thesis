@@ -30,7 +30,6 @@ def covertToList(npArray):
         alist.append(sublist)
     return alist
 def US(X, Y):
-    print('yes')
     test = SelectKBest(score_func=f_classif, k=4)
     fit = test.fit(X, Y.ravel())
     # summarize scores
@@ -89,9 +88,14 @@ def lasso(X,Y):
 
 #format the output function
 def get_list_func(listName, reverse):
-    columns = ['CM_AIDS','CM_ALCOHOL','CM_ANEMDEF','CM_ARTH','CM_BLDLOSS','CM_CHF','CM_CHRNLUNG','CM_COAG','CM_DEPRESS','CM_DM'
-        ,'CM_DMCX','CM_DRUG','CM_HTN_C','CM_HYPOTHY','CM_LIVER','CM_LYMPH','CM_LYTES','CM_METS','CM_NEURO','CM_OBESE','CM_PARA','CM_PERIVASC','CM_PSYCH'
-        ,'CM_PULMCIRC','CM_RENLFAIL','CM_TUMOR','CM_ULCER','CM_VALVE','CM_WGHTLOSS','CM_RENLFAIL','CM_TUMOR']
+    # columns = ['CM_AIDS','CM_ALCOHOL','CM_ANEMDEF','CM_ARTH','CM_BLDLOSS','CM_CHF','CM_CHRNLUNG','CM_COAG','CM_DEPRESS','CM_DM'
+    #     ,'CM_DMCX','CM_DRUG','CM_HTN_C','CM_HYPOTHY','CM_LIVER','CM_LYMPH','CM_LYTES','CM_METS','CM_NEURO','CM_OBESE','CM_PARA','CM_PERIVASC','CM_PSYCH'
+    #     ,'CM_PULMCIRC','CM_RENLFAIL','CM_TUMOR','CM_ULCER','CM_VALVE','CM_WGHTLOSS','CM_RENLFAIL','CM_TUMOR']
+    columns =['SEX', 'SMOKE', 'HXCOPD', 'ASCITES', 'HXCHF',
+                                  'HYPERMED', 'DIALYSIS', 'DISCANCR', 'WNDINF', 'STEROID', 'WTLOSS', 'BLEEDIS',
+                                  'TRANSFUS', 'radial_all_yn', 'distal_all_yn', 'race_final', 'Emerg_yn',
+                                  'Diabetes_yn']
+
     refer = {}
     for key, value in zip(columns, listName):
         add_value = value[0]
@@ -123,14 +127,18 @@ def write_output(output_content):
 
 if __name__ == "__main__":    
     # load data
-    filename = r"/Users/zhipengwang/PycharmProjects/UNMC_Data_Analysis/data/real_DIED.csv"
-    feature_collections = ['CM_AIDS','CM_ALCOHOL','CM_ANEMDEF','CM_ARTH','CM_BLDLOSS','CM_CHF','CM_CHRNLUNG','CM_COAG','CM_DEPRESS','CM_DM'
-        ,'CM_DMCX','CM_DRUG','CM_HTN_C','CM_HYPOTHY','CM_LIVER','CM_LYMPH','CM_LYTES','CM_METS','CM_NEURO','CM_OBESE','CM_PARA','CM_PERIVASC','CM_PSYCH'
-        ,'CM_PULMCIRC','CM_RENLFAIL','CM_TUMOR','CM_ULCER','CM_VALVE','CM_WGHTLOSS','CM_RENLFAIL','CM_TUMOR']
+    filename = r"/Users/zhipengwang/PycharmProjects/UNMC_Data_Analysis/data/sample_Reoperation_1.csv"
+    # feature_collections = ['CM_AIDS','CM_ALCOHOL','CM_ANEMDEF','CM_ARTH','CM_BLDLOSS','CM_CHF','CM_CHRNLUNG','CM_COAG','CM_DEPRESS','CM_DM'
+    #     ,'CM_DMCX','CM_DRUG','CM_HTN_C','CM_HYPOTHY','CM_LIVER','CM_LYMPH','CM_LYTES','CM_METS','CM_NEURO','CM_OBESE','CM_PARA','CM_PERIVASC','CM_PSYCH'
+    #     ,'CM_PULMCIRC','CM_RENLFAIL','CM_TUMOR','CM_ULCER','CM_VALVE','CM_WGHTLOSS','CM_RENLFAIL','CM_TUMOR']
     # candidates_features = [x for x in feature_collections if x not in noisy_features]
+    binary_feature_collections = ['SEX', 'SMOKE', 'HXCOPD', 'ASCITES', 'HXCHF',
+                                  'HYPERMED', 'DIALYSIS', 'DISCANCR', 'WNDINF', 'STEROID', 'WTLOSS', 'BLEEDIS',
+                                  'TRANSFUS', 'radial_all_yn', 'distal_all_yn', 'race_final', 'Emerg_yn',
+                                  'Diabetes_yn']
 
     dataframe = read_csv(filename)
-    target = 'DIED'
+    target = 'Reoperation_1'
     Y_dataframe = dataframe[target]
     X_dataframe = dataframe.drop([target], axis=1)
     # data normalization
@@ -141,13 +149,11 @@ if __name__ == "__main__":
     X = X_dataframe.values
     Y = Y_dataframe.values
 
-    #uslist = US(X,Y)
-    # PRINTLIST(fisherlist, relieflist)
-    #print(uslist)
-    #print(get_list_func(uslist, True))
-    # rfmlist = RFM(X,Y)
-    # print(get_list_func(rfmlist, False))
-    # filist = FI(X,Y)
-    # # PRINTLIST(uslist, rfmlist, filist)
-    # print(filist)
-    lasso(X, Y)
+    # uslist = US(X,Y)
+    # print(get_list_func(uslist, True))
+    rfmlist = RFM(X,Y)
+    print(get_list_func(rfmlist, False))
+    #filist = FI(X,Y)
+    # PRINTLIST(uslist, rfmlist, filist)
+    #print(get_list_func(filist, True))
+    # lasso(X, Y)

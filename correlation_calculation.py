@@ -15,27 +15,35 @@ from classification_using_normal_model import GENERATE_CONFUSION_MATRIX
 def correlation_heatmap(train, upper_bound, lower_bound, feature_collections):
     dependent_features = [[]]
     correlations = train.corr()
+    fig, ax = plt.subplots(figsize=(25, 25))
+    sns.heatmap(correlations, vmax=1.0, center=0, fmt='.2f',
+                square=True, linewidths=0.1, annot=True, cbar_kws={"shrink": 0.7})
+    plt.show();
+    return further_operation(correlations, dependent_features, feature_collections, lower_bound, train, upper_bound)
+
+def transform(train):
+    correlations = train.corr()
     fig, ax = plt.subplots(figsize=(20, 20))
     sns.heatmap(correlations, vmax=1.0, center=0, fmt='.2f',
                 square=True, linewidths=0.1, annot=True, cbar_kws={"shrink": 0.7})
     plt.show();
+
+def further_operation(correlations, dependent_features, feature_collections, lower_bound, train, upper_bound):
     columns = np.full((correlations.shape[0],), True, dtype=bool)
     for i in range(correlations.shape[0]):
-        for j in range(i+1, correlations.shape[0]):
-            if correlations.iloc[i,j] >= upper_bound or correlations.iloc[i,j] <= lower_bound:
+        for j in range(i + 1, correlations.shape[0]):
+            if correlations.iloc[i, j] >= upper_bound or correlations.iloc[i, j] <= lower_bound:
                 # drop both feature
                 if columns[j]:
                     columns[j] = False;
-                if(columns[i]):
+                if (columns[i]):
                     columns[i] = False;
                 dependent_features.append([feature_collections[i], feature_collections[j]])
-
     independent_features = train.columns[columns]
-    #print(selected_columns[0:].values)
+    # print(selected_columns[0:].values)
     data = train[independent_features]
-    #print(data)
+    # print(data)
     return data, independent_features, dependent_features
-
 
 
 #do a verification based on our assumption
@@ -66,8 +74,8 @@ def getQk(name):
 
 
 if __name__ == "__main__":
-    filename = r"/Users/zhipengwang/PycharmProjects/UNMC_Data_Analysis/data/real_DIED.csv"
-    target="DIED"
+    filename = r"/Users/zhipengwang/PycharmProjects/UNMC_Data_Analysis/data/real_Approach.csv"
+    target="Apporach"
     origin_data = pd.read_csv(filename)
     # feature_collections = ['Groups', 'SEX', 'AGE', 'BMI', 'SMOKE', 'DYSPNEA', 'FNSTATUS2', 'HXCOPD', 'ASCITES', 'HXCHF',
     #                        'HYPERMED', 'DIALYSIS', 'DISCANCR', 'WNDINF', 'STEROID', 'WTLOSS', 'BLEEDIS', 'TRANSFUS',
@@ -79,7 +87,11 @@ if __name__ == "__main__":
                            'CM_OBESE', 'CM_PARA', 'CM_PERIVASC', 'CM_PSYCH'
         , 'CM_PULMCIRC', 'CM_RENLFAIL', 'CM_TUMOR', 'CM_ULCER', 'CM_VALVE', 'CM_WGHTLOSS', 'CM_RENLFAIL', 'CM_TUMOR']
 
-
+    # correlation_map = transform(origin_data)
+    # final = [correlation_map]
+    #
+    # df = pd.DataFrame(final)
+    # df.to_excel(r"/Users/zhipengwang/Desktop/output_result.xlsx", index=False)
     data, independent_features, dependent_features = correlation_heatmap(origin_data, upper_bound= 0.2, lower_bound= -0.2, feature_collections = feature_collections)
     dependent_features = dependent_features[1:] #first list is empty set we should remove it
     # print(dependent_features)

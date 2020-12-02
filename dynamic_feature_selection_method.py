@@ -88,15 +88,35 @@ def drop_determined_samples(selected_feature, visited):
         if data[selected_feature][i] == 1 and data[target][i] == 1:
             visited.append(i)
 
-if __name__ == "__main__":
-    filename = r"/Users/zhipengwang/PycharmProjects/UNMC_Data_Analysis/data/original_DIED.csv"
-    target="DIED"
+def static_selection(data, binary_feature_collections, target):
 
-    binary_feature_collections = ['FEMALE','CM_AIDS','CM_ALCOHOL','CM_ANEMDEF','CM_ARTH','CM_BLDLOSS','CM_CHF','CM_CHRNLUNG','CM_COAG','CM_DEPRESS','CM_DM','CM_DMCX','CM_DRUG','CM_HTN_C',
-                           'CM_HYPOTHY','CM_LIVER','CM_LYMPH','CM_LYTES','CM_METS','CM_NEURO',
-                           'CM_OBESE','CM_PARA','CM_PERIVASC','CM_PSYCH','CM_PULMCIRC','CM_RENLFAIL','CM_TUMOR','CM_ULCER','CM_VALVE','CM_WGHTLOSS']
+    candidate_list = []
+    entropy_list = proposed_entropy_calculation(binary_feature_collections, data, target, [])
+
+    # sort the whole dict based on the entropy score, smaller means better
+    entropy_list = sorted(entropy_list.items(), key=itemgetter(1))
+    print(entropy_list)
+    candidate_list.append(entropy_list[0][0])
+    # drop the samples where feature value is 1 and target is also 1
+
+    return entropy_list, candidate_list
+
+
+if __name__ == "__main__":
+    filename = r"/Users/zhipengwang/PycharmProjects/UNMC_Data_Analysis/data/real_Approach.csv"
+    target="Approach"
+
+    binary_feature_collections = ['CM_AIDS', 'CM_ALCOHOL', 'CM_ANEMDEF', 'CM_ARTH', 'CM_BLDLOSS', 'CM_CHF',
+                                  'CM_CHRNLUNG', 'CM_COAG', 'CM_DEPRESS', 'CM_DM', 'CM_DMCX', 'CM_DRUG', 'CM_HTN_C',
+                                  'CM_HYPOTHY', 'CM_LIVER', 'CM_LYMPH', 'CM_LYTES', 'CM_METS', 'CM_NEURO',
+                                  'CM_OBESE', 'CM_PARA', 'CM_PERIVASC', 'CM_PSYCH', 'CM_PULMCIRC', 'CM_RENLFAIL',
+                                  'CM_TUMOR', 'CM_ULCER', 'CM_VALVE', 'CM_WGHTLOSS']
     data = pd.read_csv(filename, encoding='ISO-8859-1')
     X = data
-    entropy_list = dynamic_selection(data, binary_feature_collections, target)
+    entropy_list, candidate_list = static_selection(data, binary_feature_collections, target)
     print(entropy_list)
 
+    final = [entropy_list]
+
+    df = pd.DataFrame(final, columns=binary_feature_collections)
+    df.to_excel(r"/Users/zhipengwang/Desktop/output_result.xlsx", index=False)

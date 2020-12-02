@@ -51,15 +51,14 @@ class TPR_and_TNR:
         binary_feature_collections = ['CM_AIDS','CM_ALCOHOL','CM_ANEMDEF','CM_ARTH','CM_BLDLOSS','CM_CHF','CM_CHRNLUNG','CM_COAG','CM_DEPRESS','CM_DM'
             ,'CM_DMCX','CM_DRUG','CM_HTN_C','CM_HYPOTHY','CM_LIVER','CM_LYMPH','CM_LYTES','CM_METS','CM_NEURO','CM_OBESE','CM_PARA','CM_PERIVASC','CM_PSYCH'
             ,'CM_PULMCIRC','CM_RENLFAIL','CM_TUMOR','CM_ULCER','CM_VALVE','CM_WGHTLOSS']
-        confusion_matrix_list = [[[16988, 34], [582, 6]], [[16675, 347],[498, 90]], [[15875, 1147],[389, 199]], [[13575, 46],[450, 17]], [[13354, 267],[396, 71]], [[12709, 912],[310, 157]]
-                                 , [[20108, 310],[638, 76]], [[20008, 410],[604, 110]], [[19035, 1383],[468, 246]]]
+        confusion_matrix_list = []
 
         positive = []
         negative = []
         scores = []
         for matrix in confusion_matrix_list:
             # tpr, tnr = return_tpr_tnr(matrix)
-            score = tpr_minus_fpr(matrix)
+            score = tpr_times_tnr(matrix)
             scores.append(score)
 
 

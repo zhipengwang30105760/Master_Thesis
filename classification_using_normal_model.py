@@ -106,20 +106,45 @@ def drop_constant_columns(dataframe, candidate_features):
             if column in feature_collections:
                 feature_collections.remove(column)
     return result, candidates_features
-
-
-if __name__ == "__main__":
+def DIED_FEATURE_COLLECTIONS():
     feature_collections = ['CM_AIDS','CM_ALCOHOL','CM_ANEMDEF','CM_ARTH','CM_BLDLOSS','CM_CHF','CM_CHRNLUNG','CM_COAG','CM_DEPRESS','CM_DM'
         ,'CM_DMCX','CM_DRUG','CM_HTN_C','CM_HYPOTHY','CM_LIVER','CM_LYMPH','CM_LYTES','CM_METS','CM_NEURO','CM_OBESE','CM_PARA','CM_PERIVASC','CM_PSYCH'
         ,'CM_PULMCIRC','CM_RENLFAIL','CM_TUMOR','CM_ULCER','CM_VALVE','CM_WGHTLOSS','CM_RENLFAIL','CM_TUMOR']
     #candidate_features = ['CM_COAG', 'CM_CHF', 'CM_LYTES','CM_WGHTLOSS','CM_PULMCIRC','CM_RENLFAIL','CM_PERIVASC','CM_PARA','CM_TUMOR']
     #candidate_features = ['CM_CHF', 'CM_COAG', 'CM_LYTES', 'CM_PARA','CM_PERIVASC']
     #candidate_features = ['CM_CHF', 'CM_COAG', 'CM_LYTES', 'CM_WGHTLOSS', 'CM_PERIVASC']
-    candidate_features = ['CM_CHRNLUNG', 'CM_METS', 'CM_COAG', 'CM_ANEMDEF', 'CM_DM']
+    candidate_features = ['CM_CHRNLUNG', 'CM_ANEMDEF', 'CM_DM', 'CM_METS', 'CM_COAG']
     #candidate_features = ['CM_TUMOR','CM_PARA','CM_PERIVASC','CM_RENLFAIL']
 
-    target = 'DIED'
-    filename = r"/Users/zhipengwang/PycharmProjects/UNMC_Data_Analysis/data/real_DIED.csv"
+def APPROACH_FEATURE_COLLECTIONS():
+    # for ui
+    # candidate_features = ['CM_LYTES','CM_METS','CM_WGHTLOSS','CM_ANEMDEF','CM_CHF','CM_BLDLOSS','CM_OBESE','CM_COAG','CM_PULMCIRC','CM_TUMOR']
+    # for rfm
+    # candidate_features = ['CM_ANEMDEF','CM_BLDLOSS','CM_CHF','CM_LYMPH','CM_LYTES','CM_METS','CM_TUMOR','CM_ULCER','CM_WGHTLOSS','CM_PARA']
+    # for our method
+    # candidate_features =['CM_OBESE','CM_HTN_C','CM_HYPOTHY','CM_DM','CM_ARTH','CM_DEPRESS','CM_DMCX','CM_CHRNLUNG','CM_PSYCH','CM_AIDS']
+    # bottom 9
+    # candidate_features = ['CM_ANEMDEF','CM_COAG','CM_PULMCIRC','CM_CHF','CM_METS','CM_BLDLOSS','CM_LYTES','CM_WGHTLOSS','CM_ULCER']
+
+    candidate_features = ['CM_CHRNLUNG', 'CM_PSYCH', 'CM_AIDS', 'CM_DEPRESS', 'CM_DMCX']
+
+def READMISSION_FEATURE_COLLECTIONS():
+    #ui method
+    #candidate_features = ['radial_all_yn','Emerg_yn','ASCITES','WTLOSS','HYPERMED','STEROID','TRANSFUS','distal_all_yn','race_final']
+    #rfm method
+    #candidate_features = ['HYPERMED','DIALYSIS','STEROID','radial_all_yn','race_final','Emerg_yn','distal_all_yn','DISCANCR','Diabetes_yn']
+    #our method
+    #candidate_features = ['Diabetes_yn','DISCANCR','SMOKE','WTLOSS','STEROID','BLEEDIS','HYPERMED','Emerg_yn','HXCOPD']
+    candidate_features = ['distal_all_yn','radial_all_yn','race_final','ASCITES','SEX','TRANSFUS','DIALYSIS','HXCHF','WNDINF']
+
+if __name__ == "__main__":
+    #candidate_features = ['TRANSFUS','STEROID','radial_all_yn','SEX','race_final','Emerg_yn','WNDINF','HXCOPD','HXCHF']
+    #candidate_features = ['WNDINF','STEROID','TRANSFUS','radial_all_yn','race_final','Emerg_yn','BLEEDIS','SMOKE','SEX']
+    #candidate_features = ['WTLOSS','DISCANCR','STEROID','WNDINF','HXCHF','HXCOPD','Emerg_yn','ASCITES','TRANSFUS']
+    #candidate_features = ['Emerg_yn','ASCITES','TRANSFUS','HXCHF','HXCOPD']
+    candidate_features = ['race_final','radial_all_yn','distal_all_yn', 'SMOKE','Diabetes_yn','SEX']
+    target = 'Readmission_1'
+    filename = r"/Users/zhipengwang/PycharmProjects/UNMC_Data_Analysis/data/sample_Readmission_1.csv"
     data = pd.read_csv(filename)
     #remove the features with constant values
     #data, candidates_features = drop_constant_columns(data, candidate_features)
@@ -132,12 +157,14 @@ if __name__ == "__main__":
     scaler = StandardScaler()
     #do normalization for BMI and AGE
     # X.iloc[:, 2:4] = scaler.fit_transform(X.iloc[:, 2:4])
-    split = 0.3
+
     #tpr_and_tnr = TPR_and_TNR()
     a = TPR_and_TNR()
 
     # r = GENERATE_CONFUSION_MATRIX(X, y, split, target)
     # print(r)
+    print('75/25')
+    split = 0.25
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=split, random_state=42, stratify=None)
     model2 = KNeighborsClassifier(3)
     model4 = LinearDiscriminantAnalysis()
@@ -158,35 +185,62 @@ if __name__ == "__main__":
     print(conf_mat2)
     print(conf_mat4)
     print(conf_mat5)
-
-    # print(conf_mat1[0][0])
-    # print(conf_mat1[1][0])
-    # print(conf_mat2[0][0])
-    # print(conf_mat2[1][0])
-    # print(conf_mat3[0][0])
-    # print(conf_mat3[1][0])
-    # print(conf_mat4[0][0])
-    # print(conf_mat4[1][0])
-    # print(conf_mat5[0][0])
-    # print(conf_mat5[1][0])
-    # print()
-    #
-    # print(conf_mat1[0][1])
-    # print(conf_mat1[1][1])
-    # print(conf_mat2[0][1])
-    # print(conf_mat2[1][1])
-    # print(conf_mat3[0][1])
-    # print(conf_mat3[1][1])
-    # print(conf_mat4[0][1])
-    # print(conf_mat4[1][1])
-    # print(conf_mat5[0][1])
-    # print(conf_mat5[1][1])
-
-    # print()
     print(a.tpr_minus_fpr(conf_mat2))
     print(a.tpr_minus_fpr(conf_mat4))
     print(a.tpr_minus_fpr(conf_mat5))
 
+
+    print('80/20')
+    split = 0.2
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=split, random_state=42, stratify=None)
+    model2 = KNeighborsClassifier(3)
+    model4 = LinearDiscriminantAnalysis()
+    model5 = GaussianNB()
+
+    model2.fit(X_train, y_train)
+    model4.fit(X_train, y_train)
+    model5.fit(X_train, y_train)
+
+    y_pred2 = model2.predict(X_test)
+    y_pred4 = model4.predict(X_test)
+    y_pred5 = model5.predict(X_test)
+
+    conf_mat2 = confusion_matrix(y_test, y_pred2)
+    conf_mat4 = confusion_matrix(y_test, y_pred4)
+    conf_mat5 = confusion_matrix(y_test, y_pred5)
+
+    print(conf_mat2)
+    print(conf_mat4)
+    print(conf_mat5)
+    print(a.tpr_minus_fpr(conf_mat2))
+    print(a.tpr_minus_fpr(conf_mat4))
+    print(a.tpr_minus_fpr(conf_mat5))
+
+    print('70/30')
+    split = 0.3
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=split, random_state=42, stratify=None)
+    model2 = KNeighborsClassifier(3)
+    model4 = LinearDiscriminantAnalysis()
+    model5 = GaussianNB()
+
+    model2.fit(X_train, y_train)
+    model4.fit(X_train, y_train)
+    model5.fit(X_train, y_train)
+
+    y_pred2 = model2.predict(X_test)
+    y_pred4 = model4.predict(X_test)
+    y_pred5 = model5.predict(X_test)
+
+    conf_mat2 = confusion_matrix(y_test, y_pred2)
+    conf_mat4 = confusion_matrix(y_test, y_pred4)
+    conf_mat5 = confusion_matrix(y_test, y_pred5)
+
+    print(conf_mat2)
+    print(conf_mat4)
+    print(conf_mat5)
+    print(a.tpr_minus_fpr(conf_mat2))
+    print(a.tpr_minus_fpr(conf_mat4))
+    print(a.tpr_minus_fpr(conf_mat5))
 
     #score = cross_val_score(svc, X, y, scoring = 'recall', cv=6)
     #print(score)

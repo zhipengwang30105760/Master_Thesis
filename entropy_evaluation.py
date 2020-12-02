@@ -93,7 +93,7 @@ def prev_feature_set():
     non_binary_feature_collections = ['Groups','ASACLAS','Pre_staging','PATHO_staging','AGE','BMI','DYSPNEA','FNSTATUS2',
                            'PRSEPIS']
 
-    non_binary_feature_collections = ['SEX', 'SMOKE', 'HXCOPD', 'ASCITES', 'HXCHF',
+    binary_feature_collections = ['SEX', 'SMOKE', 'HXCOPD', 'ASCITES', 'HXCHF',
                            'HYPERMED', 'DIALYSIS', 'DISCANCR', 'WNDINF', 'STEROID', 'WTLOSS', 'BLEEDIS', 'TRANSFUS', 'radial_all_yn', 'distal_all_yn', 'race_final', 'Emerg_yn',
                            'Diabetes_yn']
     #approach died
@@ -103,8 +103,8 @@ def prev_feature_set():
                                   'CM_OBESE', 'CM_PARA', 'CM_PERIVASC', 'CM_PSYCH', 'CM_PULMCIRC', 'CM_RENLFAIL',
                                   'CM_TUMOR', 'CM_ULCER', 'CM_VALVE', 'CM_WGHTLOSS']
 if __name__ == "__main__":
-    filename = r"/Users/zhipengwang/PycharmProjects/UNMC_Data_Analysis/data/real_DIED.csv"
-    target="DIED"
+    filename = r"/Users/zhipengwang/PycharmProjects/UNMC_Data_Analysis/data/real_Approach.csv"
+    target="Approach"
 
     binary_feature_collections = ['CM_AIDS','CM_ALCOHOL','CM_ANEMDEF','CM_ARTH','CM_BLDLOSS','CM_CHF','CM_CHRNLUNG','CM_COAG','CM_DEPRESS','CM_DM'
         ,'CM_DMCX','CM_DRUG','CM_HTN_C','CM_HYPOTHY','CM_LIVER','CM_LYMPH','CM_LYTES','CM_METS','CM_NEURO','CM_OBESE','CM_PARA','CM_PERIVASC','CM_PSYCH'
@@ -113,9 +113,9 @@ if __name__ == "__main__":
     data = pd.read_csv(filename, encoding='ISO-8859-1')
     X = data
     # data, candidates_features = drop_constant_columns(data, feature_collections)
-    print('hello')
     result = individual_confusion_matrix(X, binary_feature_collections, target)
     print(result)
+
 
 
 
@@ -177,8 +177,8 @@ if __name__ == "__main__":
     #
     # final = [output1, output2]
     #
-    # df = pd.DataFrame(result, columns=binary_feature_collections)
-    # df.to_excel(r"/Users/zhipengwang/Desktop/output_result.xlsx", index=False)
+    df = pd.DataFrame(result, columns=['first', 'second'])
+    df.to_excel(r"/Users/zhipengwang/Desktop/output_result.xlsx", index=False)
 
 
 

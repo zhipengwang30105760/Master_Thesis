@@ -102,8 +102,8 @@ def pearson_corrleation_analysis(original_data, feature_collections, target):
     return dict
 
 if __name__ == "__main__":
-    filename = r"/Users/zhipengwang/PycharmProjects/UNMC_Data_Analysis/data/real_DIED.csv"
-    target = "DIED"
+    filename = r"/Users/zhipengwang/PycharmProjects/UNMC_Data_Analysis/data/real_Approach.csv"
+    target = "Approach"
     # feature_collections = ['Groups', 'SEX', 'AGE', 'BMI', 'SMOKE', 'DYSPNEA', 'FNSTATUS2', 'HXCOPD', 'ASCITES', 'HXCHF',
     #                        'HYPERMED', 'DIALYSIS', 'DISCANCR', 'WNDINF', 'STEROID', 'WTLOSS', 'BLEEDIS', 'TRANSFUS',
     #                        'PRSEPIS', 'ASACLAS', 'radial_all_yn', 'distal_all_yn', 'race_final', 'Emerg_yn',
