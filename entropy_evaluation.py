@@ -25,8 +25,8 @@ def drop_constant_columns(dataframe, candidate_features):
     for column in dataframe.columns:
         if len(dataframe[column].unique()) == 1:
             result = result.drop(column,axis=1)
-            if column in feature_collections:
-                feature_collections.remove(column)
+            if column in candidates_features:
+                candidates_features.remove(column)
     return result, candidates_features
 
 def generate_classifier(layer, activation, solver, alpha, learning_rate):
@@ -103,12 +103,17 @@ def prev_feature_set():
                                   'CM_OBESE', 'CM_PARA', 'CM_PERIVASC', 'CM_PSYCH', 'CM_PULMCIRC', 'CM_RENLFAIL',
                                   'CM_TUMOR', 'CM_ULCER', 'CM_VALVE', 'CM_WGHTLOSS']
 if __name__ == "__main__":
-    filename = r"/Users/zhipengwang/PycharmProjects/UNMC_Data_Analysis/data/real_Approach.csv"
-    target="Approach"
+    filename = r"/Users/zhipengwang/PycharmProjects/UNMC_Data_Analysis/data/kddcup99.csv"
+    target="label"
 
-    binary_feature_collections = ['CM_AIDS','CM_ALCOHOL','CM_ANEMDEF','CM_ARTH','CM_BLDLOSS','CM_CHF','CM_CHRNLUNG','CM_COAG','CM_DEPRESS','CM_DM'
-        ,'CM_DMCX','CM_DRUG','CM_HTN_C','CM_HYPOTHY','CM_LIVER','CM_LYMPH','CM_LYTES','CM_METS','CM_NEURO','CM_OBESE','CM_PARA','CM_PERIVASC','CM_PSYCH'
-        ,'CM_PULMCIRC','CM_RENLFAIL','CM_TUMOR','CM_ULCER','CM_VALVE','CM_WGHTLOSS']
+    binary_feature_collections = ['protocol_type','land','wrong_fragment','urgent','hot','num_failed_logins','logged_in','lnum_compromised',
+                                  'lroot_shell','lsu_attempted','lnum_root','lnum_file_creations','lnum_shells','lnum_access_files','lnum_outbound_cmds',
+                                  'is_host_login','is_guest_login','serror_rate','srv_serror_rate','rerror_rate','srv_rerror_rate',
+                                  'same_srv_rate','diff_srv_rate','srv_diff_host_rate',	'dst_host_same_srv_rate','dst_host_diff_srv_rate',
+                                  'dst_host_same_src_port_rate','dst_host_srv_diff_host_rate','dst_host_serror_rate','dst_host_srv_serror_rate',
+                                  'dst_host_rerror_rate','dst_host_srv_rerror_rate']
+    binary_feature_collections.remove('wrong_fragment')
+    binary_feature_collections.remove('lnum_outbound_cmds')
 
     data = pd.read_csv(filename, encoding='ISO-8859-1')
     X = data

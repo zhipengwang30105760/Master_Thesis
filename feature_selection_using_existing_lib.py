@@ -91,10 +91,17 @@ def get_list_func(listName, reverse):
     # columns = ['CM_AIDS','CM_ALCOHOL','CM_ANEMDEF','CM_ARTH','CM_BLDLOSS','CM_CHF','CM_CHRNLUNG','CM_COAG','CM_DEPRESS','CM_DM'
     #     ,'CM_DMCX','CM_DRUG','CM_HTN_C','CM_HYPOTHY','CM_LIVER','CM_LYMPH','CM_LYTES','CM_METS','CM_NEURO','CM_OBESE','CM_PARA','CM_PERIVASC','CM_PSYCH'
     #     ,'CM_PULMCIRC','CM_RENLFAIL','CM_TUMOR','CM_ULCER','CM_VALVE','CM_WGHTLOSS','CM_RENLFAIL','CM_TUMOR']
-    columns =['SEX', 'SMOKE', 'HXCOPD', 'ASCITES', 'HXCHF',
-                                  'HYPERMED', 'DIALYSIS', 'DISCANCR', 'WNDINF', 'STEROID', 'WTLOSS', 'BLEEDIS',
-                                  'TRANSFUS', 'radial_all_yn', 'distal_all_yn', 'race_final', 'Emerg_yn',
-                                  'Diabetes_yn']
+    columns =['protocol_type', 'land', 'urgent', 'hot', 'num_failed_logins',
+                           'logged_in', 'lnum_compromised',
+                           'lroot_shell', 'lsu_attempted', 'lnum_root', 'lnum_file_creations', 'lnum_shells',
+                           'lnum_access_files',
+                           'is_host_login', 'is_guest_login', 'serror_rate', 'srv_serror_rate', 'rerror_rate',
+                           'srv_rerror_rate',
+                           'same_srv_rate', 'diff_srv_rate', 'srv_diff_host_rate', 'dst_host_same_srv_rate',
+                           'dst_host_diff_srv_rate',
+                           'dst_host_same_src_port_rate', 'dst_host_srv_diff_host_rate', 'dst_host_serror_rate',
+                           'dst_host_srv_serror_rate',
+                           'dst_host_rerror_rate', 'dst_host_srv_rerror_rate']
 
     refer = {}
     for key, value in zip(columns, listName):
@@ -127,18 +134,27 @@ def write_output(output_content):
 
 if __name__ == "__main__":    
     # load data
-    filename = r"/Users/zhipengwang/PycharmProjects/UNMC_Data_Analysis/data/sample_Reoperation_1.csv"
+    filename = r"/Users/zhipengwang/PycharmProjects/UNMC_Data_Analysis/data/kddcup99.csv"
     # feature_collections = ['CM_AIDS','CM_ALCOHOL','CM_ANEMDEF','CM_ARTH','CM_BLDLOSS','CM_CHF','CM_CHRNLUNG','CM_COAG','CM_DEPRESS','CM_DM'
     #     ,'CM_DMCX','CM_DRUG','CM_HTN_C','CM_HYPOTHY','CM_LIVER','CM_LYMPH','CM_LYTES','CM_METS','CM_NEURO','CM_OBESE','CM_PARA','CM_PERIVASC','CM_PSYCH'
     #     ,'CM_PULMCIRC','CM_RENLFAIL','CM_TUMOR','CM_ULCER','CM_VALVE','CM_WGHTLOSS','CM_RENLFAIL','CM_TUMOR']
     # candidates_features = [x for x in feature_collections if x not in noisy_features]
-    binary_feature_collections = ['SEX', 'SMOKE', 'HXCOPD', 'ASCITES', 'HXCHF',
-                                  'HYPERMED', 'DIALYSIS', 'DISCANCR', 'WNDINF', 'STEROID', 'WTLOSS', 'BLEEDIS',
-                                  'TRANSFUS', 'radial_all_yn', 'distal_all_yn', 'race_final', 'Emerg_yn',
-                                  'Diabetes_yn']
+    binary_feature_collections = ['protocol_type', 'land', 'wrong_fragment', 'urgent', 'hot', 'num_failed_logins',
+                           'logged_in', 'lnum_compromised',
+                           'lroot_shell', 'lsu_attempted', 'lnum_root', 'lnum_file_creations', 'lnum_shells',
+                           'lnum_access_files', 'lnum_outbound_cmds',
+                           'is_host_login', 'is_guest_login', 'serror_rate', 'srv_serror_rate', 'rerror_rate',
+                           'srv_rerror_rate',
+                           'same_srv_rate', 'diff_srv_rate', 'srv_diff_host_rate', 'dst_host_same_srv_rate',
+                           'dst_host_diff_srv_rate',
+                           'dst_host_same_src_port_rate', 'dst_host_srv_diff_host_rate', 'dst_host_serror_rate',
+                           'dst_host_srv_serror_rate',
+                           'dst_host_rerror_rate', 'dst_host_srv_rerror_rate']
+    binary_feature_collections.remove('wrong_fragment')
+    binary_feature_collections.remove('lnum_outbound_cmds')
 
     dataframe = read_csv(filename)
-    target = 'Reoperation_1'
+    target = 'label'
     Y_dataframe = dataframe[target]
     X_dataframe = dataframe.drop([target], axis=1)
     # data normalization
@@ -149,10 +165,10 @@ if __name__ == "__main__":
     X = X_dataframe.values
     Y = Y_dataframe.values
 
-    # uslist = US(X,Y)
-    # print(get_list_func(uslist, True))
-    rfmlist = RFM(X,Y)
-    print(get_list_func(rfmlist, False))
+    uslist = US(X,Y)
+    print(get_list_func(uslist, True))
+    # rfmlist = RFM(X,Y)
+    # print(get_list_func(rfmlist, False))
     #filist = FI(X,Y)
     # PRINTLIST(uslist, rfmlist, filist)
     #print(get_list_func(filist, True))

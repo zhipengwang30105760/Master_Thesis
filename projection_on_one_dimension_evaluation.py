@@ -102,15 +102,21 @@ def pearson_corrleation_analysis(original_data, feature_collections, target):
     return dict
 
 if __name__ == "__main__":
-    filename = r"/Users/zhipengwang/PycharmProjects/UNMC_Data_Analysis/data/real_Approach.csv"
-    target = "Approach"
-    # feature_collections = ['Groups', 'SEX', 'AGE', 'BMI', 'SMOKE', 'DYSPNEA', 'FNSTATUS2', 'HXCOPD', 'ASCITES', 'HXCHF',
-    #                        'HYPERMED', 'DIALYSIS', 'DISCANCR', 'WNDINF', 'STEROID', 'WTLOSS', 'BLEEDIS', 'TRANSFUS',
-    #                        'PRSEPIS', 'ASACLAS', 'radial_all_yn', 'distal_all_yn', 'race_final', 'Emerg_yn',
-    #                        'Diabetes_yn', 'Pre_staging', 'PATHO_staging']
-    feature_collections = ['CM_AIDS','CM_ALCOHOL','CM_ANEMDEF','CM_ARTH','CM_BLDLOSS','CM_CHF','CM_CHRNLUNG','CM_COAG','CM_DEPRESS','CM_DM'
-        ,'CM_DMCX','CM_DRUG','CM_HTN_C','CM_HYPOTHY','CM_LIVER','CM_LYMPH','CM_LYTES','CM_METS','CM_NEURO','CM_OBESE','CM_PARA','CM_PERIVASC','CM_PSYCH'
-        ,'CM_PULMCIRC','CM_RENLFAIL','CM_TUMOR','CM_ULCER','CM_VALVE','CM_WGHTLOSS']
+    filename = r"/Users/zhipengwang/PycharmProjects/UNMC_Data_Analysis/data/kddcup99.csv"
+    target = "label"
+    feature_collections = ['protocol_type', 'land', 'wrong_fragment', 'urgent', 'hot', 'num_failed_logins',
+                                  'logged_in', 'lnum_compromised',
+                                  'lroot_shell', 'lsu_attempted', 'lnum_root', 'lnum_file_creations', 'lnum_shells',
+                                  'lnum_access_files', 'lnum_outbound_cmds',
+                                  'is_host_login', 'is_guest_login', 'serror_rate', 'srv_serror_rate', 'rerror_rate',
+                                  'srv_rerror_rate',
+                                  'same_srv_rate', 'diff_srv_rate', 'srv_diff_host_rate', 'dst_host_same_srv_rate',
+                                  'dst_host_diff_srv_rate',
+                                  'dst_host_same_src_port_rate', 'dst_host_srv_diff_host_rate', 'dst_host_serror_rate',
+                                  'dst_host_srv_serror_rate',
+                                  'dst_host_rerror_rate', 'dst_host_srv_rerror_rate']
+    feature_collections.remove('wrong_fragment')
+    feature_collections.remove('lnum_outbound_cmds')
 
     original_data = pd.read_csv(filename)
     dict = projection_on_one_dimension(original_data, feature_collections, target)

@@ -135,24 +135,35 @@ def READMISSION_FEATURE_COLLECTIONS():
     #candidate_features = ['HYPERMED','DIALYSIS','STEROID','radial_all_yn','race_final','Emerg_yn','distal_all_yn','DISCANCR','Diabetes_yn']
     #our method
     #candidate_features = ['Diabetes_yn','DISCANCR','SMOKE','WTLOSS','STEROID','BLEEDIS','HYPERMED','Emerg_yn','HXCOPD']
-    candidate_features = ['distal_all_yn','radial_all_yn','race_final','ASCITES','SEX','TRANSFUS','DIALYSIS','HXCHF','WNDINF']
+    #candidate_features = ['distal_all_yn','radial_all_yn','race_final','ASCITES','SEX','TRANSFUS','DIALYSIS','HXCHF','WNDINF']
+    candidate_features = ['num_failed_logins','lnum_compromised','lroot_shell','lsu_attempted','lnum_shells','srv_serror_rate','diff_srv_rate','dst_host_same_src_port_rate','dst_host_rerror_rate']
 
 if __name__ == "__main__":
-    #candidate_features = ['TRANSFUS','STEROID','radial_all_yn','SEX','race_final','Emerg_yn','WNDINF','HXCOPD','HXCHF']
-    #candidate_features = ['WNDINF','STEROID','TRANSFUS','radial_all_yn','race_final','Emerg_yn','BLEEDIS','SMOKE','SEX']
-    #candidate_features = ['WTLOSS','DISCANCR','STEROID','WNDINF','HXCHF','HXCOPD','Emerg_yn','ASCITES','TRANSFUS']
-    #candidate_features = ['Emerg_yn','ASCITES','TRANSFUS','HXCHF','HXCOPD']
-    candidate_features = ['race_final','radial_all_yn','distal_all_yn', 'SMOKE','Diabetes_yn','SEX']
-    target = 'Readmission_1'
-    filename = r"/Users/zhipengwang/PycharmProjects/UNMC_Data_Analysis/data/sample_Readmission_1.csv"
+    #candidate_features = ['urgent','lroot_shell','num_failed_logins','lnum_compromised','is_guest_login','serror_rate','dst_host_same_src_port_rate','dst_host_serror_rate',
+#'dst_host_srv_diff_host_rate']
+    candidate_features= ['dst_host_srv_rerror_rate','dst_host_rerror_rate','srv_diff_host_rate','same_srv_rate','serror_rate']
+    #candidate_features = ['lnum_compromised', 'logged_in','srv_serror_rate','dst_host_same_srv_rate','serror_rate','same_srv_rate','srv_diff_host_rate','dst_host_rerror_rate','dst_host_srv_rerror_rate']
+    # candidate_features = [
+    #     'num_failed_logins',
+    #     'lnum_compromised',
+    #     'lroot_shell',
+    #     'lsu_attempted',
+    #     'lnum_shells',
+    #     'srv_serror_rate',
+    #     'diff_srv_rate',
+    #     'dst_host_same_src_port_rate',
+    #     'dst_host_rerror_rate'
+    # ]
+    #candidate_features = ['dst_host_srv_serror_rate','dst_host_serror_rate','dst_host_srv_diff_host_rate','dst_host_diff_srv_rate','is_guest_login']
+    target = 'label'
+    filename = r"/Users/zhipengwang/PycharmProjects/UNMC_Data_Analysis/data/kddcup99.csv"
     data = pd.read_csv(filename)
     #remove the features with constant values
     #data, candidates_features = drop_constant_columns(data, candidate_features)
     y = data[target]
-    #X = data.drop([target], axis=1)
     #X = data[candidate_features]
-    #X = data[candidate_features[0: 5]]
-    X = data[candidate_features[0: 3]]
+    X = data[candidate_features[0: 5]]
+    #X = data[candidate_features[0: 3]]
     #start data normalization
     scaler = StandardScaler()
     #do normalization for BMI and AGE
