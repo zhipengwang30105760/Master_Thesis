@@ -9,7 +9,6 @@ def entropy_calculation(p, q):
         score = -sum([p[i] * math.log2(q[i]) for i in range(len(p))])
     except:
         print()
-        #print('skip it')
     return score
 
 def calculate_prerequiste_value(data, feature, target, visited):

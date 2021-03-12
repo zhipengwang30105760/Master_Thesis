@@ -135,9 +135,9 @@ def write_output(output_content):
 if __name__ == "__main__":    
     # load data
     filename = r"/Users/zhipengwang/PycharmProjects/UNMC_Data_Analysis/data/kddcup99.csv"
-    # feature_collections = ['CM_AIDS','CM_ALCOHOL','CM_ANEMDEF','CM_ARTH','CM_BLDLOSS','CM_CHF','CM_CHRNLUNG','CM_COAG','CM_DEPRESS','CM_DM'
-    #     ,'CM_DMCX','CM_DRUG','CM_HTN_C','CM_HYPOTHY','CM_LIVER','CM_LYMPH','CM_LYTES','CM_METS','CM_NEURO','CM_OBESE','CM_PARA','CM_PERIVASC','CM_PSYCH'
-    #     ,'CM_PULMCIRC','CM_RENLFAIL','CM_TUMOR','CM_ULCER','CM_VALVE','CM_WGHTLOSS','CM_RENLFAIL','CM_TUMOR']
+    feature_collections = ['CM_AIDS','CM_ALCOHOL','CM_ANEMDEF','CM_ARTH','CM_BLDLOSS','CM_CHF','CM_CHRNLUNG','CM_COAG','CM_DEPRESS','CM_DM'
+        ,'CM_DMCX','CM_DRUG','CM_HTN_C','CM_HYPOTHY','CM_LIVER','CM_LYMPH','CM_LYTES','CM_METS','CM_NEURO','CM_OBESE','CM_PARA','CM_PERIVASC','CM_PSYCH'
+        ,'CM_PULMCIRC','CM_RENLFAIL','CM_TUMOR','CM_ULCER','CM_VALVE','CM_WGHTLOSS','CM_RENLFAIL','CM_TUMOR']
     # candidates_features = [x for x in feature_collections if x not in noisy_features]
     binary_feature_collections = ['protocol_type', 'land', 'wrong_fragment', 'urgent', 'hot', 'num_failed_logins',
                            'logged_in', 'lnum_compromised',

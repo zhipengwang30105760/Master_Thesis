@@ -16,9 +16,10 @@ def correlation_heatmap(train, upper_bound, lower_bound, feature_collections):
     dependent_features = [[]]
     correlations = train.corr()
     fig, ax = plt.subplots(figsize=(25, 25))
-    sns.heatmap(correlations, vmax=1.0, center=0, fmt='.2f',
-                square=True, linewidths=0.1, annot=True, cbar_kws={"shrink": 0.7})
-    plt.show();
+    # sns.heatmap(correlations, vmax=1.0, center=0,
+    #             square=True, linewidths=0.1, annot=True, cbar_kws={"shrink": 0.7})
+    sns.heatmap(correlations, linewidths=.5)
+    plt.show()
     return further_operation(correlations, dependent_features, feature_collections, lower_bound, train, upper_bound)
 
 def transform(train):
@@ -81,6 +82,11 @@ if __name__ == "__main__":
     #                        'HYPERMED', 'DIALYSIS', 'DISCANCR', 'WNDINF', 'STEROID', 'WTLOSS', 'BLEEDIS', 'TRANSFUS',
     #                        'PRSEPIS', 'ASACLAS', 'radial_all_yn', 'distal_all_yn', 'race_final', 'Emerg_yn',
     #                        'Diabetes_yn', 'Pre_staging', 'PATHO_staging']
+    # feature_collections = ['CM_AIDS', 'CM_ALCOHOL', 'CM_ANEMDEF', 'CM_ARTH', 'CM_BLDLOSS', 'CM_CHF', 'CM_CHRNLUNG',
+    #                        'CM_COAG', 'CM_DEPRESS', 'CM_DM'
+    #     , 'CM_DMCX', 'CM_DRUG', 'CM_HTN_C', 'CM_HYPOTHY', 'CM_LIVER', 'CM_LYMPH', 'CM_LYTES', 'CM_METS', 'CM_NEURO',
+    #                        'CM_OBESE', 'CM_PARA', 'CM_PERIVASC', 'CM_PSYCH'
+    #     , 'CM_PULMCIRC', 'CM_RENLFAIL', 'CM_TUMOR', 'CM_ULCER', 'CM_VALVE', 'CM_WGHTLOSS']
     feature_collections = ['protocol_type', 'land', 'urgent', 'hot', 'num_failed_logins',
                                   'logged_in', 'lnum_compromised',
                                   'lroot_shell', 'lsu_attempted', 'lnum_root', 'lnum_file_creations', 'lnum_shells',
@@ -93,8 +99,8 @@ if __name__ == "__main__":
                                   'dst_host_srv_serror_rate',
                                   'dst_host_rerror_rate', 'dst_host_srv_rerror_rate']
 
-    # correlation_map = transform(origin_data)
-    # final = [correlation_map]
+    correlation_map = transform(origin_data)
+    final = [correlation_map]
     #
     # df = pd.DataFrame(final)
     # df.to_excel(r"/Users/zhipengwang/Desktop/output_result.xlsx", index=False)
